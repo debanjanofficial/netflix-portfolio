@@ -1,0 +1,46 @@
+.intro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #000;
+  /* Keep intro covering the screen until animation completes */
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.intro__logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 6.5rem;
+  color: #e50914;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transform-origin: center;
+  will-change: transform, opacity;
+  /* Combined Netflix-like intro: zoom in, hold, then zoom out through center */
+  animation: logoIntro 3.2s ease-in-out forwards;
+}
+
+/* sound prompt removed — autoplay attempt remains but no prompt required */
+
+@keyframes logoIntro {
+  0% {
+    opacity: 0;
+    /* Subtle 3D bend */
+    transform: perspective(1000px) rotateX(12deg) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+    transform: perspective(1000px) rotateX(0deg) scale(1);
+  }
+  65% {
+    opacity: 1;
+    transform: perspective(1000px) rotateX(0deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    /* Blast past the viewer */
+    transform: perspective(1000px) rotateX(0deg) scale(6);
+  }
+}

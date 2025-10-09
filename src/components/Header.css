@@ -1,0 +1,52 @@
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+  background-color: #000;
+  font-family: 'Bebas Neue', sans-serif;
+}
+
+.header__logo {
+  font-size: 2.5rem;
+  color: #e50914;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.header__profile {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.header__avatar {
+  width: 30px;
+  object-fit: contain;
+  margin-right: 10px;
+}
+
+.header__dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px;
+  margin-top: 5px;
+}
+
+.header__dropdown div {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.header__dropdown div:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
