@@ -6,6 +6,7 @@ import Row from './components/Row';
 import Footer from './components/Footer';
 import Intro from './components/Intro';
 import Profile from './components/Profile';
+import RecruiterDashboard from './components/RecruiterDashboard';
 
 function App() {
   const [appState, setAppState] = useState('intro'); // intro, profile, main
@@ -75,10 +76,16 @@ function App() {
     <div className="App">
       <Header profile={profile} onProfileSwitch={handleProfileSwitch} />
       <Banner profile={profile} />
-      <Row title="Featured Projects" projects={projects.featured} />
-      <Row title="Trending Projects" projects={projects.trending} />
-      <Row title="Top Rated Projects" projects={projects.topRated} />
-      <Footer />
+      {profile === 'recruiter' ? (
+        <RecruiterDashboard />
+      ) : (
+        <>
+          <Row title="Featured Projects" projects={projects.featured} />
+          <Row title="Trending Projects" projects={projects.trending} />
+          <Row title="Top Rated Projects" projects={projects.topRated} />
+          <Footer />
+        </>
+      )}
     </div>
   );
 }

@@ -7,88 +7,63 @@ interface IntroProps {
 
 const Intro: React.FC<IntroProps> = ({ onIntroComplete }) => {
   const playedRef = useRef(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  
-
+  const audioElRef = useRef<HTMLAudioElement | null>(null);
   useEffect(() => {
-    // Attempt autoplay on mount
-    if (!playedRef.current) {
+    if (!playedRef.current && audioElRef.current) {
       playedRef.current = true;
-      // Try user's uploaded jingle first, then mp3, ogg, then synth fallback
-      const tryPlay = async () => {
-        const candidates = [
-          '/nouveau-jingle-netflix.mp3',
-          '/tudum.mp3',
-          '/tudum.ogg',
-        ];
-        for (const url of candidates) {
-          try {
-            const a = new Audio(url);
-            audioRef.current = a;
-            a.volume = 0.85;
-            a.muted = true;  // start muted to allow autoplay
-            console.log('Intro: attempting to play', url);
-            await a.play();
-            a.muted = false; // unmute after playback starts
-            console.log('Intro: playing', url);
-            return;
-          } catch (err) {
-            console.log('Intro: failed to play', url, err);
+      const el = audioElRef.current;
+      // start muted to satisfy autoplay policies
+      el.muted = true;
+      el.volume = 0.85;
+      el.play()
+        .then(() => {
+          // unmute after playback starts
+          el.muted = false;
+          console.log('Intro: jingle playing');
+        })
+        .catch((err) => {
+          console.log('Intro: play error', err);
+          // Web Audio API fallback for Chrome autoplay restrictions
+          const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+          if (AudioCtx) {
+            const ctx = new AudioCtx();
+            fetch('/nouveau-jingle-netflix.mp3')
+              .then(res => res.arrayBuffer())
+              .then(data => ctx.decodeAudioData(data))
+              .then(buffer => {
+                const source = ctx.createBufferSource();
+                source.buffer = buffer;
+                source.connect(ctx.destination);
+                source.start();
+                console.log('Intro: played via Web Audio API fallback');
+              })
+              .catch(e => console.log('Intro: Web Audio fallback failed', e));
           }
-        }
-        try {
-          console.log('Intro: falling back to synthesized sound');
-          synthTudum();
-        } catch (e) {
-          console.log('Intro: synth failed', e);
-        }
-      };
-      tryPlay();
+        });
     }
   }, []);
 
-  // synthesize a short "tudum"-like sound using Web Audio API
-  const synthTudum = () => {
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    const now = ctx.currentTime;
+  // If jingle fails, you could fallback to synthesized sound here
 
-    const gain = ctx.createGain();
-    gain.connect(ctx.destination);
-    gain.gain.setValueAtTime(0, now);
-
-    // two short tones to mimic the "tudum" feel
-    const osc1 = ctx.createOscillator();
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(160, now);
-    osc1.connect(gain);
-
-    const osc2 = ctx.createOscillator();
-    osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(220, now + 0.055);
-    osc2.connect(gain);
-
-    // envelope
-    gain.gain.linearRampToValueAtTime(0.9, now + 0.01);
-    gain.gain.linearRampToValueAtTime(0.0, now + 0.45);
-
-    osc1.start(now);
-    osc2.start(now + 0.055);
-    osc1.stop(now + 0.45);
-    osc2.stop(now + 0.45);
-
-    // close context after a short delay
-    setTimeout(() => {
-      try {
-        ctx.close();
-      } catch {}
-    }, 700);
-  };
-
+    // handler to unmute and set volume once autoplay begins
+    const handleAudioPlay = () => {
+      if (audioElRef.current) {
+        audioElRef.current.muted = false;
+        audioElRef.current.volume = 0.85;
+        console.log('Intro: audio element unmuted');
+      }
+    };
   return (
     <div className="intro">
-     <audio src="/nouveau-jingle-netflix.mp3" autoPlay preload="auto" />
+      <audio
+        ref={audioElRef}
+        src="/nouveau-jingle-netflix.mp3"
+        autoPlay
+        muted
+        playsInline
+        preload="auto"
+        style={{ position: 'absolute', width: 0, height: 0, opacity: 0 }}
+      />
       <div
         className="intro__logo"
         onAnimationEnd={() => onIntroComplete()}
