@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Header from './components/Header';
 import Banner from './components/Banner';
@@ -7,22 +7,156 @@ import Footer from './components/Footer';
 import Intro from './components/Intro';
 import Profile from './components/Profile';
 import RecruiterDashboard from './components/RecruiterDashboard';
+import SkillsShowcase from './components/SkillsShowcase';
+import SignIn, { SignInData } from './components/SignIn';
+
+type AppState = 'signin' | 'intro' | 'profile' | 'main';
+type RecruiterSection = 'dashboard' | 'skills';
+
+type AuthUser = SignInData;
+
+const STORAGE_KEY = 'netflixPortfolioUser';
+const PROFILE_KEY = 'netflixPortfolioProfile';
+const RECRUITER_SECTION_KEY = 'netflixPortfolioRecruiterSection';
+
+const readStoredUser = (): AuthUser | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const raw = window.localStorage.getItem(STORAGE_KEY);
+
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw) as AuthUser;
+  } catch (error) {
+    window.localStorage.removeItem(STORAGE_KEY);
+    return null;
+  }
+};
+
+const readStoredProfile = (): string => {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
+  return window.localStorage.getItem(PROFILE_KEY) ?? '';
+};
+
+const readStoredRecruiterSection = (): RecruiterSection => {
+  if (typeof window === 'undefined') {
+    return 'dashboard';
+  }
+
+  const stored = window.localStorage.getItem(RECRUITER_SECTION_KEY);
+  return stored === 'skills' ? 'skills' : 'dashboard';
+};
 
 function App() {
-  const [appState, setAppState] = useState('intro'); // intro, profile, main
-  const [profile, setProfile] = useState(''); // recruiter, stalker
+  const [user, setUser] = useState<AuthUser | null>(() => readStoredUser());
+  const [profile, setProfile] = useState<string>(() => readStoredProfile()); // recruiter, stalker
+  const [recruiterSection, setRecruiterSection] = useState<RecruiterSection>(() =>
+    readStoredRecruiterSection(),
+  );
+  const [appState, setAppState] = useState<AppState>(() => {
+    if (typeof window === 'undefined') {
+      return 'signin';
+    }
+    const hasStoredUser = !!window.localStorage.getItem(STORAGE_KEY);
+    if (!hasStoredUser) {
+      return 'signin';
+    }
+    const storedProfile = window.localStorage.getItem(PROFILE_KEY);
+    return storedProfile ? 'main' : 'intro';
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (user) {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    } else {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (profile) {
+      window.localStorage.setItem(PROFILE_KEY, profile);
+    } else {
+      window.localStorage.removeItem(PROFILE_KEY);
+    }
+  }, [profile]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (profile === 'recruiter') {
+      window.localStorage.setItem(RECRUITER_SECTION_KEY, recruiterSection);
+    } else {
+      window.localStorage.removeItem(RECRUITER_SECTION_KEY);
+    }
+  }, [profile, recruiterSection]);
+
+  const handleSignIn = (data: SignInData) => {
+    setUser(data);
+    setAppState(profile ? 'main' : 'intro');
+  };
 
   const handleIntroComplete = () => {
     setAppState('profile');
   };
 
-  const handleProfileSelect = (selectedProfile: string) => {
+  const activateProfile = (selectedProfile: string) => {
     setProfile(selectedProfile);
     setAppState('main');
+    if (selectedProfile === 'recruiter') {
+      setRecruiterSection(readStoredRecruiterSection());
+    } else {
+      setRecruiterSection('dashboard');
+    }
   };
 
-  const handleProfileSwitch = () => {
+  const handleProfileSelect = (selectedProfile: string) => {
+    activateProfile(selectedProfile);
+  };
+
+  const handleHeaderProfileSelect = (selectedProfile: string) => {
+    activateProfile(selectedProfile);
+  };
+
+  const handleExitToProfiles = () => {
+    setProfile('');
     setAppState('profile');
+    setRecruiterSection('dashboard');
+  };
+
+  const handleSignOut = () => {
+    setProfile('');
+    setUser(null);
+    setAppState('signin');
+    setRecruiterSection('dashboard');
+  };
+
+  const handleRecruiterSectionSelect = (section: string) => {
+    if (section.toLowerCase() === 'skills') {
+      setRecruiterSection('skills');
+    }
+  };
+
+  const handleSkillsBack = () => {
+    setRecruiterSection('dashboard');
   };
 
   const projects = {
@@ -64,22 +198,45 @@ function App() {
     ],
   };
 
+  if (appState === 'signin' || !user) {
+    return <SignIn onSignIn={handleSignIn} />;
+  }
+
   if (appState === 'intro') {
     return <Intro onIntroComplete={handleIntroComplete} />;
   }
 
   if (appState === 'profile') {
-    return <Profile onProfileSelect={handleProfileSelect} />;
+    return (
+      <Profile
+        onProfileSelect={handleProfileSelect}
+        viewerName={user.firstName}
+      />
+    );
   }
 
   return (
     <div className="App">
-      <Header profile={profile} onProfileSwitch={handleProfileSwitch} />
-      <Banner profile={profile} />
+      {profile === 'recruiter' && recruiterSection === 'skills' ? null : (
+        <Header
+          profile={profile}
+          onSelectProfile={handleHeaderProfileSelect}
+          onExitToProfiles={handleExitToProfiles}
+          onSignOut={handleSignOut}
+        />
+      )}
       {profile === 'recruiter' ? (
-        <RecruiterDashboard />
+        recruiterSection === 'skills' ? (
+          <SkillsShowcase onBack={handleSkillsBack} />
+        ) : (
+          <>
+            <Banner profile={profile} />
+            <RecruiterDashboard onSelectSection={handleRecruiterSectionSelect} />
+          </>
+        )
       ) : (
         <>
+          <Banner profile={profile} />
           <Row title="Featured Projects" projects={projects.featured} />
           <Row title="Trending Projects" projects={projects.trending} />
           <Row title="Top Rated Projects" projects={projects.topRated} />

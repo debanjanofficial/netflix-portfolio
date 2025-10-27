@@ -21,9 +21,15 @@
   border-radius: 8px;
   cursor: pointer;
   transition: transform 0.2s;
+  border: none;
+  width: 100%;
 }
 .dashboard__card:hover {
   transform: scale(1.05);
+}
+.dashboard__card:focus-visible {
+  outline: 2px solid #e50914;
+  outline-offset: 4px;
 }
 .dashboard__cardContent h3 {
   color: #fff;

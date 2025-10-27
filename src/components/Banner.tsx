@@ -12,22 +12,31 @@ const Banner: React.FC<BannerProps> = ({ profile }) => {
   if (isRecruiter) {
     // Recruiter hero with name and summary
     return (
-      <header
-        className="banner"
-        style={{
-          backgroundImage: `url("https://images.unsplash.com/photo-1573495628361-0a2122f803f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80")`,
-        }}
-      >
-        <div className="banner__contents">
+      <section className="banner banner--recruiter">
+        <video
+          className="banner__video"
+          src="/a-young-handsome-businessman-student-in-a-suit-comes-with-a-briefcase-at-the-s-SBV-348637057-preview.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+        />
+        <div className="banner__overlay" aria-hidden="true" />
+        <div className="banner__contents banner__contents--recruiter">
           <div style={{ marginBottom: '20px' }}>
             <FalconLogo size="large" />
           </div>
-          <h1 className="banner__title">Debanjan Chakraborty</h1>
+          <h1 className="banner__title banner__title--recruiter">Debanjan Chakraborty</h1>
           <p className="banner__summary">
-            Data Science MSc graduate with a focus on extracting actionable insights from complex datasets to drive strategic decision-making. Experienced in leveraging advanced analytics, machine learning, and data visualization to solve business challenges and optimize operations. Eager to apply analytical skills to support business growth and innovation in a dynamic corporate environment.
+            Data Science MSc graduate with a focus on extracting actionable insights from complex datasets to drive strategic decision-making. Experienced in leveraging advanced analytics, machine learning, and data visualization to solve business challenges and optimize operations.
+          </p>
+          <p className="banner__summary">
+            Eager to apply analytical skills to support business growth and innovation in a dynamic corporate environment.
           </p>
         </div>
-      </header>
+        <div className="banner--fadeBottom" />
+      </section>
     );
   }
   // Default Netflix-style hero
