@@ -2,6 +2,13 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## VPS Server Setup
+USE THE FOLLOWING COMMANDS TO SET UP A VPS SERVER FOR HOSTING THE REACT APP
+vps:4.211.135.250
+username: debanjanofficial
+password: ssh key
+
+
 ## Available Scripts
 
 In the project directory, you can run:

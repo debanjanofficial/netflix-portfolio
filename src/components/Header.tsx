@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Header.css';
+import FalconLogo from './FalconLogo';
 
 interface HeaderProps {
   profile: string;
@@ -11,7 +12,7 @@ const Header: React.FC<HeaderProps> = ({ profile, onProfileSwitch }) => {
 
   return (
     <div className="header">
-      <div className="header__logo">Debanjan Chakraborty</div>
+      <FalconLogo size="small" />
       <div className="header__profile" onClick={() => setDropdown(!dropdown)}>
         <img
           className="header__avatar"

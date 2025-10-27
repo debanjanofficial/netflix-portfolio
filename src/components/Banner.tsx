@@ -1,5 +1,6 @@
 import React from 'react';
 import './Banner.css';
+import FalconLogo from './FalconLogo';
 
 interface BannerProps {
   profile: string;
@@ -18,6 +19,9 @@ const Banner: React.FC<BannerProps> = ({ profile }) => {
         }}
       >
         <div className="banner__contents">
+          <div style={{ marginBottom: '20px' }}>
+            <FalconLogo size="large" />
+          </div>
           <h1 className="banner__title">Debanjan Chakraborty</h1>
           <p className="banner__summary">
             Data Science MSc graduate with a focus on extracting actionable insights from complex datasets to drive strategic decision-making. Experienced in leveraging advanced analytics, machine learning, and data visualization to solve business challenges and optimize operations. Eager to apply analytical skills to support business growth and innovation in a dynamic corporate environment.
