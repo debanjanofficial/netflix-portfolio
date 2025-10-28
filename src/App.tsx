@@ -8,10 +8,11 @@ import Intro from './components/Intro';
 import Profile from './components/Profile';
 import RecruiterDashboard from './components/RecruiterDashboard';
 import SkillsShowcase from './components/SkillsShowcase';
+import ExperienceShowcase from './components/ExperienceShowcase';
 import SignIn, { SignInData } from './components/SignIn';
 
 type AppState = 'signin' | 'intro' | 'profile' | 'main';
-type RecruiterSection = 'dashboard' | 'skills';
+type RecruiterSection = 'dashboard' | 'skills' | 'experience';
 
 type AuthUser = SignInData;
 
@@ -52,7 +53,10 @@ const readStoredRecruiterSection = (): RecruiterSection => {
   }
 
   const stored = window.localStorage.getItem(RECRUITER_SECTION_KEY);
-  return stored === 'skills' ? 'skills' : 'dashboard';
+  if (stored === 'skills' || stored === 'experience') {
+    return stored;
+  }
+  return 'dashboard';
 };
 
 function App() {
@@ -150,8 +154,11 @@ function App() {
   };
 
   const handleRecruiterSectionSelect = (section: string) => {
-    if (section.toLowerCase() === 'skills') {
+    const normalized = section.toLowerCase();
+    if (normalized === 'skills') {
       setRecruiterSection('skills');
+    } else if (normalized === 'experience') {
+      setRecruiterSection('experience');
     }
   };
 
@@ -217,7 +224,7 @@ function App() {
 
   return (
     <div className="App">
-      {profile === 'recruiter' && recruiterSection === 'skills' ? null : (
+      {profile === 'recruiter' && (recruiterSection === 'skills' || recruiterSection === 'experience') ? null : (
         <Header
           profile={profile}
           onSelectProfile={handleHeaderProfileSelect}
@@ -228,6 +235,8 @@ function App() {
       {profile === 'recruiter' ? (
         recruiterSection === 'skills' ? (
           <SkillsShowcase onBack={handleSkillsBack} />
+        ) : recruiterSection === 'experience' ? (
+          <ExperienceShowcase onBack={handleSkillsBack} />
         ) : (
           <>
             <Banner profile={profile} />
