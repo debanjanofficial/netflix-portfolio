@@ -1,5 +1,6 @@
 import React from 'react';
 import './Profile.css';
+import { useLanguage } from '../context/LanguageContext';
 
 interface ProfileProps {
   onProfileSelect: (profile: string) => void;
@@ -7,7 +8,10 @@ interface ProfileProps {
 }
 
 const Profile: React.FC<ProfileProps> = ({ onProfileSelect, viewerName }) => {
-  const heading = viewerName ? `Who's watching, ${viewerName}?` : "Who's watching?";
+  const { t } = useLanguage();
+  const heading = viewerName
+    ? t('profile.headingWithName').replace('{{name}}', viewerName)
+    : t('profile.heading');
 
   return (
     <div className="profile">
@@ -15,11 +19,11 @@ const Profile: React.FC<ProfileProps> = ({ onProfileSelect, viewerName }) => {
       <div className="profile__list">
         <div className="profile__item" onClick={() => onProfileSelect('recruiter')}>
           <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="Recruiter" />
-          <span>Recruiter</span>
+          <span>{t('profile.recruiter')}</span>
         </div>
         <div className="profile__item" onClick={() => onProfileSelect('stalker')}>
           <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="Stalker" />
-          <span>Stalker</span>
+          <span>{t('profile.stalker')}</span>
         </div>
       </div>
     </div>

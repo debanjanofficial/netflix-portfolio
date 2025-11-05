@@ -1,0 +1,129 @@
+.account {
+  min-height: 100vh;
+  background: linear-gradient(120deg, rgba(229, 9, 20, 0.25), rgba(0, 0, 0, 0.9));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #fff;
+}
+
+.account__card {
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: 18px;
+  padding: 32px 36px;
+  width: 100%;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 35px 55px rgba(0, 0, 0, 0.5);
+}
+
+.account__back {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.account__back:hover,
+.account__back:focus-visible {
+  color: #fff;
+  outline: none;
+}
+
+.account__title {
+  font-size: 2rem;
+  margin: 0;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-family: 'Bebas Neue', sans-serif;
+}
+
+.account__message {
+  margin: 0;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.account__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.account__prompt {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.account__providers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.account__provider {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.account__provider--google {
+  background: linear-gradient(135deg, #e50914, #b20710);
+  color: #fff;
+}
+
+.account__provider--linkedin {
+  background: linear-gradient(135deg, #0a66c2, #084b90);
+  color: #fff;
+}
+
+.account__provider:hover,
+.account__provider:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+  outline: none;
+}
+
+.account__footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.account__signOut {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  color: #fff;
+  padding: 10px 22px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.account__signOut:hover,
+.account__signOut:focus-visible {
+  background: rgba(255, 255, 255, 0.15);
+  outline: none;
+}
+
+@media (max-width: 600px) {
+  .account__card {
+    padding: 24px 22px;
+  }
+
+  .account__title {
+    font-size: 1.6rem;
+  }
+}

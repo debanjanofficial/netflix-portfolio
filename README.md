@@ -8,6 +8,8 @@ vps:4.211.135.250
 username: debanjanofficial
 password: ssh key
 
+## VPS Folder Structure
+- Portfolio (this project) deploys to `~/sites/portfolio/current` on the VPS. The symlink `~/build` also points here for backwards-compatible deployments.
 
 ## Available Scripts
 

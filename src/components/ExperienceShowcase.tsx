@@ -1,58 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './ExperienceShowcase.css';
-
+import { useLanguage } from '../context/LanguageContext';
+import { experiences } from '../content/data';
 interface ExperienceShowcaseProps {
   onBack: () => void;
+  initialExperienceId?: string;
 }
 
-interface ExperienceDetail {
-  id: string;
-  role: string;
-  company: string;
-  duration: string;
-  bullets: string[];
-}
-
-const EXPERIENCES: ExperienceDetail[] = [
-  {
-    id: 'data-scientist',
-    role: 'Data Scientist',
-    company: 'Siemens Energy',
-    duration: '10.2025 – Present',
-    bullets: [
-      'Driving data-driven decision making across energy initiatives with advanced analytics and AI.',
-      'Experimenting with LLMs and predictive models to optimize operational efficiency.',
-      'Partnering with product stakeholders to align solutions with business goals.',
-    ],
-  },
-  {
-    id: 'db-management',
-    role: 'Database Management & Data Analysis',
-    company: 'Siemens Energy',
-    duration: '12.2024 – 09.2025',
-    bullets: [
-      'Managed MS SQL databases, synchronizing SharePoint and Excel sources via Power Automate.',
-      'Leveraged Alteryx for data manipulation, analysis, and preprocessing across R&D portfolios.',
-      'Built Tableau dashboards and reports to surface processed insights for leadership.',
-      'Collaborated with users and stakeholders to refine requirements and validate solutions.',
-      'Created and maintained collaborative databases to support digital use cases.',
-    ],
-  },
-  {
-    id: 'intern-analyst',
-    role: 'Intern Data Analyst',
-    company: 'IT Grow Division Limited',
-    duration: '10.2021 – 03.2022',
-    bullets: [
-      'Federated data into Power BI from MySQL and Excel, applying Power Query transformations.',
-      'Delivered cross-functional dashboards for finance, sales, marketing, supply chain, and executives.',
-      'Adopted project chartering, stakeholder mapping, and Kanban practices to streamline delivery.',
-    ],
-  },
-];
-
-const ExperienceShowcase: React.FC<ExperienceShowcaseProps> = ({ onBack }) => {
-  const [activeId, setActiveId] = useState<string>(EXPERIENCES[0].id);
+const ExperienceShowcase: React.FC<ExperienceShowcaseProps> = ({ onBack, initialExperienceId }) => {
+  const { language, t } = useLanguage();
+  const [activeId, setActiveId] = useState<string>(initialExperienceId ?? experiences[0].id);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [reportText, setReportText] = useState('');
@@ -73,10 +30,17 @@ const ExperienceShowcase: React.FC<ExperienceShowcaseProps> = ({ onBack }) => {
     }
   }, []);
 
-  const activeExperience = useMemo(
-    () => EXPERIENCES.find((exp) => exp.id === activeId) ?? EXPERIENCES[0],
-    [activeId],
-  );
+  useEffect(() => {
+    if (initialExperienceId) {
+      setActiveId(initialExperienceId);
+    }
+  }, [initialExperienceId]);
+
+  const activeExperience = useMemo(() => {
+    return experiences.find((exp) => exp.id === activeId) ?? experiences[0];
+  }, [activeId]);
+
+  const experienceContent = activeExperience.content[language] ?? activeExperience.content.en;
 
   const openReport = () => {
     setReportText('');
@@ -139,32 +103,47 @@ const ExperienceShowcase: React.FC<ExperienceShowcaseProps> = ({ onBack }) => {
       <div className="experience__content">
         <div className="experience__heading">
           <div className="experience__titleRow">
-            <h1 className="experience__title">Experience</h1>
+            <h1 className="experience__title">{t('experience.title') || 'Experience'}</h1>
+            <div className="experience__infoWrapper">
+              <button
+                type="button"
+                className="experience__infoButton"
+                aria-describedby="experience-info-tooltip"
+              >
+                i
+              </button>
+              <div className="experience__tooltip" role="tooltip" id="experience-info-tooltip">
+                {t('experience.info')}
+              </div>
+            </div>
           </div>
         </div>
         <div className="experience__panel">
           <div className="experience__tabs" role="tablist">
-            {EXPERIENCES.map((exp) => (
-              <button
-                key={exp.id}
-                type="button"
-                className={`experience__tab ${exp.id === activeExperience.id ? 'experience__tab--active' : ''}`}
-                onClick={() => setActiveId(exp.id)}
-                role="tab"
-                aria-selected={exp.id === activeExperience.id}
-              >
-                {exp.role}
-              </button>
-            ))}
+            {experiences.map((exp) => {
+              const content = exp.content[language] ?? exp.content.en;
+              return (
+                <button
+                  key={exp.id}
+                  type="button"
+                  className={`experience__tab ${exp.id === activeExperience.id ? 'experience__tab--active' : ''}`}
+                  onClick={() => setActiveId(exp.id)}
+                  role="tab"
+                  aria-selected={exp.id === activeExperience.id}
+                >
+                  {content.role}
+                </button>
+              );
+            })}
           </div>
           <div className="experience__details" role="tabpanel">
             <div className="experience__meta">
-              <h2 className="experience__role">{activeExperience.role}</h2>
-              <span className="experience__company">{activeExperience.company}</span>
-              <span className="experience__duration">{activeExperience.duration}</span>
+              <h2 className="experience__role">{experienceContent.role}</h2>
+              <span className="experience__company">{experienceContent.company}</span>
+              <span className="experience__duration">{experienceContent.duration}</span>
             </div>
             <ul className="experience__bullets">
-              {activeExperience.bullets.map((bullet) => (
+              {experienceContent.bullets.map((bullet) => (
                 <li key={bullet}>{bullet}</li>
               ))}
             </ul>
@@ -174,14 +153,14 @@ const ExperienceShowcase: React.FC<ExperienceShowcaseProps> = ({ onBack }) => {
       {reportOpen && (
         <div className="experience__modalBackdrop" role="dialog" aria-modal="true">
           <div className="experience__modal">
-            <h2 className="experience__modalTitle">Report an Issue</h2>
+            <h2 className="experience__modalTitle">{t('report.title')}</h2>
             <label className="experience__modalLabel" htmlFor="experience-report-input">
-              What is the issue?
+              {t('report.label')}
             </label>
             <textarea
               id="experience-report-input"
               className="experience__textarea"
-              placeholder="Describe the problem you encountered..."
+              placeholder={t('report.placeholder')}
               value={reportText}
               onChange={(event) => {
                 setReportText(event.target.value);
@@ -189,12 +168,10 @@ const ExperienceShowcase: React.FC<ExperienceShowcaseProps> = ({ onBack }) => {
               }}
             />
             {reportStatus === 'error' && (
-              <p className="experience__modalMessage experience__modalMessage--error">
-                Please describe the issue before sending.
-              </p>
+              <p className="experience__modalMessage experience__modalMessage--error">{t('report.error')}</p>
             )}
             {reportStatus === 'sent' && (
-              <p className="experience__modalMessage experience__modalMessage--success">Issue sent.</p>
+              <p className="experience__modalMessage experience__modalMessage--success">{t('report.success')}</p>
             )}
             <div className="experience__modalActions">
               <button
@@ -202,14 +179,14 @@ const ExperienceShowcase: React.FC<ExperienceShowcaseProps> = ({ onBack }) => {
                 className="experience__modalButton experience__modalButton--secondary"
                 onClick={closeReport}
               >
-                Cancel
+                {t('report.cancel')}
               </button>
               <button
                 type="button"
                 className="experience__modalButton experience__modalButton--primary"
                 onClick={submitReport}
               >
-                Send
+                {t('report.send')}
               </button>
             </div>
           </div>

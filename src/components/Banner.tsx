@@ -1,12 +1,15 @@
 import React from 'react';
 import './Banner.css';
 import FalconLogo from './FalconLogo';
+import { useLanguage } from '../context/LanguageContext';
+import { bannerSummary } from '../content/data';
 
 interface BannerProps {
   profile: string;
 }
 
 const Banner: React.FC<BannerProps> = ({ profile }) => {
+  const { language, t } = useLanguage();
   // Determine if recruiter view
   const isRecruiter = profile === 'recruiter';
   if (isRecruiter) {
@@ -28,12 +31,11 @@ const Banner: React.FC<BannerProps> = ({ profile }) => {
             <FalconLogo size="large" />
           </div>
           <h1 className="banner__title banner__title--recruiter">Debanjan Chakraborty</h1>
-          <p className="banner__summary">
-            Data Science MSc graduate with a focus on extracting actionable insights from complex datasets to drive strategic decision-making. Experienced in leveraging advanced analytics, machine learning, and data visualization to solve business challenges and optimize operations.
-          </p>
-          <p className="banner__summary">
-            Eager to apply analytical skills to support business growth and innovation in a dynamic corporate environment.
-          </p>
+          {bannerSummary[language].map((line) => (
+            <p key={line} className="banner__summary">
+              {line}
+            </p>
+          ))}
         </div>
         <div className="banner--fadeBottom" />
       </section>
@@ -50,8 +52,8 @@ const Banner: React.FC<BannerProps> = ({ profile }) => {
       <div className="banner__contents">
         <h1 className="banner__title">NÉRO THE ASSASSIN</h1>
         <div className="banner__buttons">
-          <button className="banner__button banner__button--play">Play</button>
-          <button className="banner__button banner__button--info">More Info</button>
+          <button className="banner__button banner__button--play">{t('banner.play') || 'Play'}</button>
+          <button className="banner__button banner__button--info">{t('banner.moreInfo') || 'More Info'}</button>
         </div>
       </div>
       <div className="banner--fadeBottom" />

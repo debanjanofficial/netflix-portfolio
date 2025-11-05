@@ -1,51 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './SkillsShowcase.css';
-
+import { useLanguage } from '../context/LanguageContext';
+import { skillGroups } from '../content/data';
 interface SkillsShowcaseProps {
   onBack: () => void;
+  initialGroupId?: string;
 }
 
-interface SkillGroup {
-  id: string;
-  label: string;
-  items: string[];
-}
-
-const SKILL_GROUPS: SkillGroup[] = [
-  {
-    id: 'programming',
-    label: 'Programming',
-    items: ['Python', 'SQL', 'Alteryx'],
-  },
-  {
-    id: 'power-platform',
-    label: 'Microsoft Power Platform',
-    items: ['Power BI', 'Power Automate', 'Power Apps'],
-  },
-  {
-    id: 'ml-dl',
-    label: 'Machine Learning & Deep Learning',
-    items: ['Scikit-Learn', 'PyTorch', 'OpenCV', 'LLMs', 'Transformers', 'NumPy', 'Pandas'],
-  },
-  {
-    id: 'office-365',
-    label: 'Office 365',
-    items: ['Excel', 'SharePoint', 'PowerPoint', 'Azure ML'],
-  },
-  {
-    id: 'devops',
-    label: 'GitHub & Docker',
-    items: ['GitHub', 'Docker'],
-  },
-  {
-    id: 'visualization',
-    label: 'Visualization',
-    items: ['Matplotlib', 'Seaborn', 'Tableau'],
-  },
-];
-
-const SkillsShowcase: React.FC<SkillsShowcaseProps> = ({ onBack }) => {
-  const [activeGroupId, setActiveGroupId] = useState<string>(SKILL_GROUPS[0].id);
+const SkillsShowcase: React.FC<SkillsShowcaseProps> = ({ onBack, initialGroupId }) => {
+  const { language, t } = useLanguage();
+  const [activeGroupId, setActiveGroupId] = useState<string>(initialGroupId ?? skillGroups[0].id);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [reportText, setReportText] = useState('');
@@ -66,10 +30,17 @@ const SkillsShowcase: React.FC<SkillsShowcaseProps> = ({ onBack }) => {
     }
   }, []);
 
-  const activeGroup = useMemo(
-    () => SKILL_GROUPS.find((group) => group.id === activeGroupId) ?? SKILL_GROUPS[0],
-    [activeGroupId],
-  );
+  useEffect(() => {
+    if (initialGroupId) {
+      setActiveGroupId(initialGroupId);
+    }
+  }, [initialGroupId]);
+
+  const activeGroup = useMemo(() => {
+    return skillGroups.find((group) => group.id === activeGroupId) ?? skillGroups[0];
+  }, [activeGroupId]);
+
+  const activeItems = activeGroup.items[language] ?? activeGroup.items.en;
 
   const handleOpenReport = () => {
     setReportText('');
@@ -132,7 +103,7 @@ const SkillsShowcase: React.FC<SkillsShowcaseProps> = ({ onBack }) => {
       <div className="skills__content">
         <div className="skills__heading">
           <div className="skills__titleRow">
-            <h1 className="skills__title">Skills</h1>
+            <h1 className="skills__title">{t('skills.title') || 'Skills'}</h1>
             <div className="skills__infoWrapper">
               <button
                 type="button"
@@ -142,14 +113,14 @@ const SkillsShowcase: React.FC<SkillsShowcaseProps> = ({ onBack }) => {
                 i
               </button>
               <div className="skills__tooltip" role="tooltip" id="skills-info-tooltip">
-                Advanced analytics, automation, and visualization capabilities crafted for enterprise-ready data science solutions.
+                {t('skills.info')}
               </div>
             </div>
           </div>
         </div>
         <div className="skills__panel">
           <div className="skills__tabs" role="tablist">
-            {SKILL_GROUPS.map((group) => (
+            {skillGroups.map((group) => (
               <button
                 key={group.id}
                 type="button"
@@ -158,13 +129,13 @@ const SkillsShowcase: React.FC<SkillsShowcaseProps> = ({ onBack }) => {
                 role="tab"
                 aria-selected={group.id === activeGroup.id}
               >
-                {group.label}
+                {group.label[language] ?? group.label.en}
               </button>
             ))}
           </div>
           <div className="skills__listWrap" role="tabpanel">
             <ul className="skills__list">
-              {activeGroup.items.map((item) => (
+              {activeItems.map((item) => (
                 <li key={item} className="skills__listItem">
                   {item}
                 </li>
@@ -176,14 +147,14 @@ const SkillsShowcase: React.FC<SkillsShowcaseProps> = ({ onBack }) => {
       {reportOpen && (
         <div className="skills__modalBackdrop" role="dialog" aria-modal="true">
           <div className="skills__modal">
-            <h2 className="skills__modalTitle">Report an Issue</h2>
+            <h2 className="skills__modalTitle">{t('report.title')}</h2>
             <label className="skills__modalLabel" htmlFor="skills-report-input">
-              What is the issue?
+              {t('report.label')}
             </label>
             <textarea
               id="skills-report-input"
               className="skills__textarea"
-              placeholder="Describe the problem you encountered..."
+              placeholder={t('report.placeholder')}
               value={reportText}
               onChange={(event) => {
                 setReportText(event.target.value);
@@ -191,12 +162,10 @@ const SkillsShowcase: React.FC<SkillsShowcaseProps> = ({ onBack }) => {
               }}
             />
             {reportStatus === 'error' && (
-              <p className="skills__modalMessage skills__modalMessage--error">
-                Please describe the issue before sending.
-              </p>
+              <p className="skills__modalMessage skills__modalMessage--error">{t('report.error')}</p>
             )}
             {reportStatus === 'sent' && (
-              <p className="skills__modalMessage skills__modalMessage--success">Issue sent.</p>
+              <p className="skills__modalMessage skills__modalMessage--success">{t('report.success')}</p>
             )}
             <div className="skills__modalActions">
               <button
@@ -204,14 +173,14 @@ const SkillsShowcase: React.FC<SkillsShowcaseProps> = ({ onBack }) => {
                 className="skills__modalButton skills__modalButton--secondary"
                 onClick={handleCloseReport}
               >
-                Cancel
+                {t('report.cancel')}
               </button>
               <button
                 type="button"
                 className="skills__modalButton skills__modalButton--primary"
                 onClick={handleReportSubmit}
               >
-                Send
+                {t('report.send')}
               </button>
             </div>
           </div>

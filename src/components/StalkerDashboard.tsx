@@ -1,5 +1,5 @@
 import React from 'react';
-import './RecruiterDashboard.css';
+import './StalkerDashboard.css';
 import { useLanguage } from '../context/LanguageContext';
 
 const sections = [
@@ -10,24 +10,24 @@ const sections = [
   { id: 'contact', translationKey: 'recruiter.section.contact' },
 ];
 
-interface RecruiterDashboardProps {
+interface StalkerDashboardProps {
   onSelectSection: (sectionId: string) => void;
 }
 
-const RecruiterDashboard: React.FC<RecruiterDashboardProps> = ({ onSelectSection }) => {
+const StalkerDashboard: React.FC<StalkerDashboardProps> = ({ onSelectSection }) => {
   const { t } = useLanguage();
   return (
-    <div className="dashboard">
-      <h2 className="dashboard__title">{t('recruiter.title')}</h2>
-      <div className="dashboard__grid">
+    <div className="stalkerDashboard">
+      <h2 className="stalkerDashboard__title">{t('recruiter.title')}</h2>
+      <div className="stalkerDashboard__grid">
         {sections.map((section) => (
           <button
             key={section.id}
-            className="dashboard__card"
+            className="stalkerDashboard__card"
             type="button"
             onClick={() => onSelectSection(section.id)}
           >
-            <div className="dashboard__cardContent">
+            <div className="stalkerDashboard__cardContent">
               <h3>{t(section.translationKey)}</h3>
             </div>
           </button>
@@ -37,4 +37,4 @@ const RecruiterDashboard: React.FC<RecruiterDashboardProps> = ({ onSelectSection
   );
 };
 
-export default RecruiterDashboard;
+export default StalkerDashboard;

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './SignIn.css';
+import { useLanguage } from '../context/LanguageContext';
 
 export type AuthProvider = 'google' | 'linkedin' | 'guest';
 
@@ -11,16 +12,18 @@ export interface SignInData {
 
 interface SignInProps {
   onSignIn: (data: SignInData) => void;
+  onAnonymousVisit: () => void;
 }
 
-const SignIn: React.FC<SignInProps> = ({ onSignIn }) => {
+const SignIn: React.FC<SignInProps> = ({ onSignIn, onAnonymousVisit }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [error, setError] = useState('');
+  const { t } = useLanguage();
 
   const handleSubmit = (provider: AuthProvider) => {
     if (!firstName.trim() || !lastName.trim()) {
-      setError('Please enter both first and last name before continuing.');
+      setError(t('signin.error'));
       return;
     }
 
@@ -33,24 +36,29 @@ const SignIn: React.FC<SignInProps> = ({ onSignIn }) => {
 
   return (
     <div className="signin">
+      <button
+        type="button"
+        className="signin__anonymousButton"
+        onClick={onAnonymousVisit}
+      >
+        Visit as Anonymous
+      </button>
       <div className="signin__overlay" />
       <div className="signin__card">
-        <h1 className="signin__title">Sign In</h1>
-        <p className="signin__subtitle">
-          Continue your Netflix-style journey with personalized access.
-        </p>
+        <h1 className="signin__title">{t('signin.title')}</h1>
+        <p className="signin__subtitle">{t('signin.subtitle')}</p>
         <form
           className="signin__form"
           onSubmit={(event) => event.preventDefault()}
         >
           <label className="signin__label" htmlFor="firstName">
-            First Name
+            {t('signin.firstName')}
           </label>
           <input
             id="firstName"
             name="firstName"
             className="signin__input"
-            placeholder="Enter your first name"
+            placeholder={t('signin.firstName')}
             value={firstName}
             onChange={(event) => {
               setFirstName(event.target.value);
@@ -59,13 +67,13 @@ const SignIn: React.FC<SignInProps> = ({ onSignIn }) => {
           />
 
           <label className="signin__label" htmlFor="lastName">
-            Last Name
+            {t('signin.lastName')}
           </label>
           <input
             id="lastName"
             name="lastName"
             className="signin__input"
-            placeholder="Enter your last name"
+            placeholder={t('signin.lastName')}
             value={lastName}
             onChange={(event) => {
               setLastName(event.target.value);
@@ -83,7 +91,7 @@ const SignIn: React.FC<SignInProps> = ({ onSignIn }) => {
             <span className="signin__providerIcon" aria-hidden="true">
               G
             </span>
-            Sign in with Google
+            {t('signin.google')}
           </button>
 
           <button
@@ -94,7 +102,7 @@ const SignIn: React.FC<SignInProps> = ({ onSignIn }) => {
             <span className="signin__providerIcon" aria-hidden="true">
               in
             </span>
-            Sign in with LinkedIn
+            {t('signin.linkedin')}
           </button>
 
           <button
@@ -105,12 +113,10 @@ const SignIn: React.FC<SignInProps> = ({ onSignIn }) => {
             <span className="signin__providerIcon" aria-hidden="true">
               GU
             </span>
-            Continue as Guest
+            {t('signin.guest')}
           </button>
         </form>
-        <p className="signin__disclaimer">
-          We&apos;ll remember you on this browser for faster access next time.
-        </p>
+        <p className="signin__disclaimer">{t('signin.disclaimer')}</p>
       </div>
     </div>
   );
