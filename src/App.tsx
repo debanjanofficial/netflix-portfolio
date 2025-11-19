@@ -19,11 +19,14 @@ import { useLanguage } from './context/LanguageContext';
 import { skillGroups, experiences, educationEntries, projectEntries } from './content/data';
 import { translations } from './i18n/translations';
 import { LanguageCode } from './context/LanguageContext';
+import { useAuth } from './context/AuthProvider';
+import emailjs from '@emailjs/browser';
 
 type AppState = 'signin' | 'intro' | 'profile' | 'main' | 'account' | 'notFound';
 type ProfileSection = 'dashboard' | 'skills' | 'experience' | 'education' | 'projects';
 
 type AuthUser = SignInData;
+type AuthFlow = 'login' | 'signup' | null;
 
 interface SearchIndexItem {
   id: string;
@@ -42,6 +45,13 @@ interface HeaderSearchResult {
 const STORAGE_KEY = 'netflixPortfolioUser';
 const PROFILE_KEY = 'netflixPortfolioProfile';
 const RECRUITER_SECTION_KEY = 'netflixPortfolioRecruiterSection';
+const REMEMBERED_USER_KEY = 'netflixPortfolioRememberedUser';
+const KNOWN_AUTH_USERS_KEY = 'netflixKnownAuthUsers';
+const AUTH_FLOW_KEY = 'netflixAuthFlow';
+
+const EMAILJS_SERVICE_ID = process.env.REACT_APP_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
 
 const readStoredUser = (): AuthUser | null => {
   if (typeof window === 'undefined') {
@@ -55,7 +65,12 @@ const readStoredUser = (): AuthUser | null => {
   }
 
   try {
-    return JSON.parse(raw) as AuthUser;
+    const parsed = JSON.parse(raw) as AuthUser;
+    if (parsed.provider !== 'guest') {
+      window.localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    return parsed;
   } catch (error) {
     window.localStorage.removeItem(STORAGE_KEY);
     return null;
@@ -85,9 +100,58 @@ const readStoredRecruiterSection = (): ProfileSection => {
   return 'dashboard';
 };
 
+const readRememberedUser = (): AuthUser | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  const raw = window.localStorage.getItem(REMEMBERED_USER_KEY);
+  if (!raw) {
+    return null;
+  }
+  try {
+    return JSON.parse(raw) as AuthUser;
+  } catch (error) {
+    window.localStorage.removeItem(REMEMBERED_USER_KEY);
+    return null;
+  }
+};
+
+const readKnownAuthUsers = (): string[] => {
+  if (typeof window === 'undefined') {
+    return [];
+  }
+  const raw = window.localStorage.getItem(KNOWN_AUTH_USERS_KEY);
+  if (!raw) {
+    return [];
+  }
+  try {
+    return JSON.parse(raw) as string[];
+  } catch (error) {
+    window.localStorage.removeItem(KNOWN_AUTH_USERS_KEY);
+    return [];
+  }
+};
+
+const readStoredAuthFlow = (): AuthFlow => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  const raw = window.localStorage.getItem(AUTH_FLOW_KEY) as AuthFlow | null;
+  return raw === 'login' || raw === 'signup' ? raw : null;
+};
+
 function App() {
   const { language, t } = useLanguage();
-  const [user, setUser] = useState<AuthUser | null>(() => readStoredUser());
+  const {
+    isConfigured: authConfigured,
+    isLoading: authLoading,
+    isAuthenticated,
+    user: auth0User,
+    loginWithRedirect,
+    logout,
+  } = useAuth();
+  const [guestUser, setGuestUser] = useState<AuthUser | null>(() => readStoredUser());
+  const [rememberedUser, setRememberedUser] = useState<AuthUser | null>(() => readRememberedUser());
   const [profile, setProfile] = useState<string>(() => readStoredProfile()); // recruiter, stalker
   const [recruiterSection, setRecruiterSection] = useState<ProfileSection>(() =>
     readStoredRecruiterSection(),
@@ -109,18 +173,172 @@ function App() {
   const [educationFocusId, setEducationFocusId] = useState<string | undefined>();
   const [projectsFocusId, setProjectsFocusId] = useState<string | undefined>();
   const [notFoundQuery, setNotFoundQuery] = useState('');
+  const [knownAuthUsers, setKnownAuthUsers] = useState<string[]>(() => readKnownAuthUsers());
+  const [authFlow, setAuthFlow] = useState<AuthFlow>(() => readStoredAuthFlow());
+  const [accountError, setAccountError] = useState<string | null>(null);
+
+  const updateAuthFlow = useCallback(
+    (flow: AuthFlow) => {
+      setAuthFlow(flow);
+      if (typeof window === 'undefined') {
+        return;
+      }
+      if (flow) {
+        window.localStorage.setItem(AUTH_FLOW_KEY, flow);
+      } else {
+        window.localStorage.removeItem(AUTH_FLOW_KEY);
+      }
+    },
+    [],
+  );
+
+  const addKnownAuthUser = useCallback((authId: string | undefined | null) => {
+    if (!authId) {
+      return;
+    }
+    setKnownAuthUsers((prev) => {
+      if (prev.includes(authId)) {
+        return prev;
+      }
+      const updated = [...prev, authId];
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(KNOWN_AUTH_USERS_KEY, JSON.stringify(updated));
+      }
+      return updated;
+    });
+  }, []);
+
+  const authMappedUser = useMemo<AuthUser | null>(() => {
+    if (!isAuthenticated || !auth0User) {
+      return null;
+    }
+    const providerId = auth0User.sub?.split('|')[0];
+    let provider: AuthProvider = 'guest';
+    if (providerId === 'google-oauth2') {
+      provider = 'google';
+    } else if (providerId === 'linkedin') {
+      provider = 'linkedin';
+    } else if (providerId === 'facebook') {
+      provider = 'facebook';
+    }
+    const fullName = auth0User.name || '';
+    const nameParts = fullName.trim().split(' ');
+    const firstName = auth0User.given_name || nameParts[0] || 'User';
+    const lastName = auth0User.family_name || nameParts.slice(1).join(' ') || '';
+    return {
+      firstName,
+      lastName,
+      provider,
+      authId: auth0User.sub,
+      email: auth0User.email ?? undefined,
+    };
+  }, [auth0User, isAuthenticated]);
+
+  const user = authMappedUser ?? guestUser;
+
+  const sendWelcomeEmail = useCallback((userData: AuthUser) => {
+    if (userData.provider !== 'google') {
+      return;
+    }
+    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
+      console.warn('EmailJS environment variables are not configured.');
+      return;
+    }
+    if (!userData.email) {
+      console.warn('No email address found for welcome message.');
+      return;
+    }
+    emailjs
+      .send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          to_email: userData.email,
+          to_name: `${userData.firstName} ${userData.lastName}`,
+        },
+        {
+          publicKey: EMAILJS_PUBLIC_KEY,
+        },
+      )
+      .catch((error) => {
+        console.error('Failed to send welcome email', error);
+      });
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
       return;
     }
 
-    if (user) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    if (guestUser) {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(guestUser));
+      window.localStorage.setItem(REMEMBERED_USER_KEY, JSON.stringify(guestUser));
+      setRememberedUser(guestUser);
     } else {
       window.localStorage.removeItem(STORAGE_KEY);
     }
-  }, [user]);
+  }, [guestUser]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    if (authMappedUser) {
+      window.localStorage.setItem(REMEMBERED_USER_KEY, JSON.stringify(authMappedUser));
+      setRememberedUser(authMappedUser);
+    }
+  }, [authMappedUser]);
+
+  useEffect(() => {
+    if (!authMappedUser) {
+      if (!guestUser && !authLoading) {
+        setAppState('signin');
+      }
+      return;
+    }
+    const authId = auth0User?.sub;
+    const currentFlow = authFlow ?? readStoredAuthFlow();
+    const isKnown = authId ? knownAuthUsers.includes(authId) : false;
+
+    if (currentFlow === 'login' && authId && !isKnown) {
+      setAccountError(t('signin.accountNotFound'));
+      updateAuthFlow(null);
+      logout({
+        logoutParams: {
+          returnTo: window.location.origin,
+        },
+      });
+      setGuestUser(null);
+      setRememberedUser(null);
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem(STORAGE_KEY);
+        window.localStorage.removeItem(REMEMBERED_USER_KEY);
+      }
+      setAppState('signin');
+      return;
+    }
+
+    if (authId && !isKnown) {
+      addKnownAuthUser(authId);
+      sendWelcomeEmail(authMappedUser);
+    }
+    setAccountError(null);
+    setAppState(profile ? 'main' : 'intro');
+    updateAuthFlow(null);
+  }, [
+    authMappedUser,
+    auth0User,
+    authFlow,
+    knownAuthUsers,
+    addKnownAuthUser,
+    sendWelcomeEmail,
+    logout,
+    guestUser,
+    authLoading,
+    profile,
+    updateAuthFlow,
+    t,
+  ]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -381,25 +599,68 @@ function App() {
     setAppState('main');
   }, []);
 
-  const handleLinkProvider = useCallback(
-    (provider: AuthProvider) => {
-      setUser((prev) => {
-        if (!prev) {
-          return prev;
-        }
-        return {
-          ...prev,
-          provider,
-        };
+  const handleProviderSignIn = useCallback(
+    async (provider: Exclude<AuthProvider, 'guest'>) => {
+      if (!authConfigured) {
+        window.alert('Social sign-in is not configured. Please contact the administrator.');
+        return;
+      }
+      let connection = 'google-oauth2';
+      if (provider === 'linkedin') {
+        connection = 'linkedin';
+      } else if (provider === 'facebook') {
+        connection = 'facebook';
+      }
+      await loginWithRedirect({
+        authorizationParams: {
+          connection,
+        },
       });
     },
-    [],
+    [authConfigured, loginWithRedirect],
   );
 
-  const handleSignIn = (data: SignInData) => {
-    setUser(data);
-    setAppState(profile ? 'main' : 'intro');
+  const startSignupWithProvider = useCallback(
+    (provider: Exclude<AuthProvider, 'guest'>) => {
+      updateAuthFlow('signup');
+      handleProviderSignIn(provider);
+    },
+    [handleProviderSignIn, updateAuthFlow],
+  );
+
+  const startLoginWithProvider = useCallback(
+    (provider: Exclude<AuthProvider, 'guest'>) => {
+      updateAuthFlow('login');
+      handleProviderSignIn(provider);
+    },
+    [handleProviderSignIn, updateAuthFlow],
+  );
+
+  const handleLinkProvider = useCallback(
+    (provider: AuthProvider) => {
+      if (provider === 'guest') {
+        return;
+      }
+      startLoginWithProvider(provider);
+    },
+    [startLoginWithProvider],
+  );
+
+  const handleQuickLogin = () => {
+    if (!rememberedUser) {
+      return;
+    }
+    if (rememberedUser.provider === 'guest') {
+      setGuestUser(rememberedUser);
+      setAppState(profile ? 'main' : 'intro');
+    } else {
+      startLoginWithProvider(rememberedUser.provider);
+    }
   };
+
+  const handleDismissAccountError = useCallback(() => {
+    setAccountError(null);
+  }, []);
 
   const handleAnonymousVisit = () => {
     const anonymousUser: AuthUser = {
@@ -407,7 +668,7 @@ function App() {
       lastName: 'Visitor',
       provider: 'guest',
     };
-    setUser(anonymousUser);
+    setGuestUser(anonymousUser);
     setProfile('');
     setAppState('profile');
     setRecruiterSection('dashboard');
@@ -454,12 +715,20 @@ function App() {
 
   const handleSignOut = () => {
     setProfile('');
-    setUser(null);
-    setAppState('signin');
+    setGuestUser(null);
     setRecruiterSection('dashboard');
     setStalkerSection('dashboard');
     clearFocusStates();
     setNotFoundQuery('');
+    if (authMappedUser && authConfigured) {
+      logout({
+        logoutParams: {
+          returnTo: window.location.origin,
+        },
+      });
+    } else {
+      setAppState('signin');
+    }
   };
 
   const handleRecruiterSectionSelect = (sectionId: string) => {
@@ -560,7 +829,19 @@ function App() {
   };
 
   if (appState === 'signin' || !user) {
-    return <SignIn onSignIn={handleSignIn} onAnonymousVisit={handleAnonymousVisit} />;
+    return (
+      <SignIn
+        onAnonymousVisit={handleAnonymousVisit}
+        onProviderSignIn={startSignupWithProvider}
+        onExistingProviderSignIn={startLoginWithProvider}
+        providerLoading={authLoading}
+        providersEnabled={authConfigured}
+        rememberedUser={rememberedUser}
+        onQuickLogin={rememberedUser ? handleQuickLogin : undefined}
+        accountError={accountError}
+        onDismissAccountError={accountError ? handleDismissAccountError : undefined}
+      />
+    );
   }
 
   if (appState === 'intro') {

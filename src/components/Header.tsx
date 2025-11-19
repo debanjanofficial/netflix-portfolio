@@ -51,6 +51,7 @@ const Header: React.FC<HeaderProps> = ({
   const languageMenuRef = useRef<HTMLDivElement | null>(null);
   const searchRef = useRef<HTMLDivElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const dropdownCloseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -151,19 +152,47 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  const clearDropdownCloseTimeout = () => {
+    if (dropdownCloseTimeout.current) {
+      clearTimeout(dropdownCloseTimeout.current);
+      dropdownCloseTimeout.current = null;
+    }
+  };
+
+  const openProfileDropdown = () => {
+    clearDropdownCloseTimeout();
+    setDropdownOpen(true);
+  };
+
+  const scheduleProfileDropdownClose = () => {
+    clearDropdownCloseTimeout();
+    dropdownCloseTimeout.current = setTimeout(() => {
+      setDropdownOpen(false);
+      dropdownCloseTimeout.current = null;
+    }, 200);
+  };
+
   const handleProfileClick = () => {
+    clearDropdownCloseTimeout();
     setDropdownOpen((open) => !open);
   };
 
   const closeProfileDropdown = () => {
+    clearDropdownCloseTimeout();
     setDropdownOpen(false);
   };
 
   const handleProfileBlur = (event: React.FocusEvent<HTMLDivElement>) => {
     if (!event.currentTarget.contains(event.relatedTarget)) {
-      setDropdownOpen(false);
+      closeProfileDropdown();
     }
   };
+
+  useEffect(() => {
+    return () => {
+      clearDropdownCloseTimeout();
+    };
+  }, []);
 
   return (
     <header className={`header ${isSolid ? 'header--solid' : ''}`}>
@@ -266,8 +295,8 @@ const Header: React.FC<HeaderProps> = ({
         <div
           className="header__profile"
           ref={profileMenuRef}
-          onMouseEnter={() => setDropdownOpen(true)}
-          onMouseLeave={closeProfileDropdown}
+          onMouseEnter={openProfileDropdown}
+          onMouseLeave={scheduleProfileDropdownClose}
           onClick={handleProfileClick}
           onBlur={handleProfileBlur}
           role="button"
@@ -297,8 +326,8 @@ const Header: React.FC<HeaderProps> = ({
             <div
               className="header__dropdown"
               role="menu"
-              onMouseEnter={() => setDropdownOpen(true)}
-              onMouseLeave={closeProfileDropdown}
+              onMouseEnter={openProfileDropdown}
+              onMouseLeave={scheduleProfileDropdownClose}
             >
               {otherProfiles.map(({ id, label }) => (
                 <button

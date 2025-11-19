@@ -11,6 +11,28 @@ password: ssh key
 ## VPS Folder Structure
 - Portfolio (this project) deploys to `~/sites/portfolio/current` on the VPS. The symlink `~/build` also points here for backwards-compatible deployments.
 
+## Authentication Setup
+The app now relies on Auth0 to power the Google and LinkedIn sign-in buttons.
+
+1. Create a **Single Page Application** in Auth0 and enable the **Google** (`google-oauth2`), **LinkedIn**, and **Facebook** connections.
+2. Under *Applications → Settings*, add the following URLs:
+   - Allowed Callback URLs: `https://debanjanchakraborty.dev` (plus `http://localhost:3000` for local dev).
+   - Allowed Logout URLs: same as above.
+   - Allowed Web Origins: include both URLs as well.
+3. Copy the Auth0 domain and client ID into a `.env` file (see `.env.example`):
+   ```
+   REACT_APP_AUTH0_DOMAIN=your-tenant.us.auth0.com
+   REACT_APP_AUTH0_CLIENT_ID=yourClientId
+   ```
+4. If you want the Google welcome email feature, configure [EmailJS](https://www.emailjs.com/) and add the IDs/keys shown in `.env.example`.
+5. Restart `npm start` so CRA picks up the new environment variables, then redeploy with `npm run build`.
+
+### Login Flow Notes
+- The inline provider buttons on the Sign In screen act as **Sign Up**: they require first/last name before redirecting to Auth0.
+- The bottom “Login” button opens a provider picker for returning users. If a user logs in without having signed up on this browser before, they’ll see an “Account not found” message.
+- Known accounts (tracked in `localStorage`) unlock the one-click “Continue as …” shortcut and the dedicated login modal.
+- Anonymous browsing is still available via the “Visit as Anonymous” chip in the top-right corner.
+
 ## Available Scripts
 
 In the project directory, you can run:

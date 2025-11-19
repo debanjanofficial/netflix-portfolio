@@ -172,9 +172,9 @@ export const experiences: ExperienceEntry[] = [
     id: 'intern-analyst',
     content: {
       en: {
-        role: 'Intern Data Analyst',
+        role: 'Data Analyst',
         company: 'IT Grow Division Limited',
-        duration: '10.2021 – 03.2022',
+        duration: '10.2021 – 03.2023',
         bullets: [
           'Integrated MySQL and Excel data into Power BI with Power Query transformations.',
           'Delivered finance, sales, marketing, supply chain, and executive dashboards to improve gross margin.',
@@ -182,9 +182,9 @@ export const experiences: ExperienceEntry[] = [
         ],
       },
       de: {
-        role: 'Praktikant Datenanalyse',
+        role: 'Datenanalyst',
         company: 'IT Grow Division Limited',
-        duration: '10.2021 – 03.2022',
+        duration: '10.2021 – 03.2023',
         bullets: [
           'Integrierte MySQL- und Excel-Daten in Power BI und führte Transformationen mit Power Query durch.',
           'Lieferte Dashboards für Finanzen, Vertrieb, Marketing, Supply Chain und Management zur Verbesserung der Marge.',
@@ -299,16 +299,16 @@ export const projectEntries: ProjectEntry[] = [
     content: {
       en: {
         title: "Driver's Friend - AI-Powered Multilingual Chatbot (Ongoing)",
-        url: 'https://github.com/debanjanofficial/Driver-s-Friend',
+        url: 'https://www.driversfreund.com',
         summary:
-          'Created a bilingual chatbot for German driving regulations with conversation memory, intelligent scraping, and real-time chat built on React, FastAPI, and MongoDB.',
+          'Created a bilingual chatbot for German driving regulations with conversation memory, intelligent scraping, and real-time chat built on React, FastAPI.',
         tech: ['React', 'TypeScript', 'Python', 'FastAPI', 'MongoDB', 'NLP', 'spaCy', 'Multilingual Support', 'Real-time Chat'],
       },
       de: {
         title: "Driver's Friend - KI-gestützter mehrsprachiger Chatbot (laufend)",
-        url: 'https://github.com/debanjanofficial/Driver-s-Friend',
+        url: 'https://www.driversfreund.com',
         summary:
-          'Entwickelte einen zweisprachigen Chatbot für deutsche Verkehrsregeln mit Gesprächsspeicher, intelligentem Scraping und Echtzeit-Chat auf Basis von React, FastAPI und MongoDB.',
+          'Entwickelte einen zweisprachigen Chatbot für deutsche Verkehrsregeln mit Gesprächsspeicher, intelligentem Scraping und Echtzeit-Chat auf Basis von React, FastAPI.',
         tech: ['React', 'TypeScript', 'Python', 'FastAPI', 'MongoDB', 'NLP', 'spaCy', 'Mehrsprachige KI', 'Echtzeit-Chat'],
       },
     },

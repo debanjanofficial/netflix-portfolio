@@ -42,6 +42,14 @@ const AccountPage: React.FC<AccountPageProps> = ({ user, onBack, onSignOut, onLi
       );
     }
 
+    if (user.provider === 'facebook') {
+      return (
+        <p className="account__message">
+          {t('account.facebookSignedIn').replace('{{name}}', `${user.firstName} ${user.lastName}`)}
+        </p>
+      );
+    }
+
     return null;
   };
 
@@ -69,6 +77,13 @@ const AccountPage: React.FC<AccountPageProps> = ({ user, onBack, onSignOut, onLi
               onClick={() => onLinkProvider('linkedin')}
             >
               {t('account.linkLinkedIn')}
+            </button>
+            <button
+              type="button"
+              className="account__provider account__provider--facebook"
+              onClick={() => onLinkProvider('facebook')}
+            >
+              {t('account.linkFacebook')}
             </button>
           </div>
         </div>

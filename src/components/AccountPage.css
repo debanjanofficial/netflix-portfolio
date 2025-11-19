@@ -88,6 +88,11 @@
   color: #fff;
 }
 
+.account__provider--facebook {
+  background: linear-gradient(135deg, #1877f2, #0f4a92);
+  color: #fff;
+}
+
 .account__provider:hover,
 .account__provider:focus-visible {
   transform: translateY(-2px);
