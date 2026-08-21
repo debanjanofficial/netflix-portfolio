@@ -8,21 +8,47 @@
   position: fixed;
   inset: 0;
   z-index: 9999;
+  overflow: hidden;
+}
+
+.intro__glow {
+  position: absolute;
+  width: min(70vw, 760px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(229, 9, 20, 0.22), rgba(229, 9, 20, 0) 68%);
+  animation: introGlow 3.2s ease-in-out forwards;
 }
 
 .intro__logo {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 6.5rem;
   color: #e50914;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 0.08em;
   transform-origin: center;
   will-change: transform, opacity;
-  /* Portfolio intro: zoom in, hold, then zoom out through center */
   animation: logoIntro 3.2s ease-in-out forwards;
 }
 
-/* sound prompt removed — autoplay attempt remains but no prompt required */
+.intro__logo h1 {
+  margin: 0;
+  font-size: clamp(4rem, 12vw, 9rem);
+  line-height: 0.82;
+  text-shadow: 0 0 28px rgba(229, 9, 20, 0.38);
+}
+
+.intro__overline,
+.intro__surname {
+  color: rgba(255, 255, 255, 0.82);
+  letter-spacing: 0.42em;
+}
+
+.intro__overline { margin: 0 0 14px 0.42em; font-size: clamp(0.72rem, 1.5vw, 1rem); }
+.intro__surname { margin: 16px 0 0 0.42em; font-size: clamp(1.25rem, 3.5vw, 2.5rem); }
 
 @keyframes logoIntro {
   0% {
@@ -43,4 +69,15 @@
     /* Blast past the viewer */
     transform: perspective(1000px) rotateX(0deg) scale(6);
   }
+}
+
+@keyframes introGlow {
+  0% { opacity: 0; transform: scale(0.55); }
+  28%, 68% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.4); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro__logo,
+  .intro__glow { animation-duration: 0.15s; }
 }

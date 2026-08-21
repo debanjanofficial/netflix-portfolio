@@ -6,12 +6,18 @@ import { translations } from './i18n/translations';
 
 test('renders the portfolio profile selector', () => {
   window.localStorage.clear();
+  window.sessionStorage.clear();
   render(
     <LanguageProvider translations={translations}>
       <App />
     </LanguageProvider>,
   );
 
+  expect(screen.getByLabelText('Debanjan Chakraborty portfolio introduction')).toBeInTheDocument();
+  fireEvent.animationEnd(screen.getByText('Debanjan'));
+
+  expect(screen.queryByLabelText('Debanjan Chakraborty portfolio introduction')).not.toBeInTheDocument();
+  expect(window.sessionStorage.getItem('portfolioIntroSeen')).toBe('true');
   expect(screen.getByText(/choose a profile/i)).toBeInTheDocument();
   expect(screen.getByText('Recruiter')).toBeInTheDocument();
   expect(screen.getByText('Visitor')).toBeInTheDocument();
@@ -27,6 +33,7 @@ const dashboardSections = [
 
 test.each(['Recruiter', 'Visitor'])('returns from every section to the %s dashboard', (profileName) => {
   window.localStorage.clear();
+  window.sessionStorage.clear();
   window.scrollTo = jest.fn();
   Object.defineProperty(HTMLMediaElement.prototype, 'play', {
     configurable: true,
@@ -41,6 +48,7 @@ test.each(['Recruiter', 'Visitor'])('returns from every section to the %s dashbo
     <LanguageProvider translations={translations}><App /></LanguageProvider>,
   );
 
+  fireEvent.animationEnd(screen.getByText('Debanjan'));
   fireEvent.click(screen.getByText(profileName));
 
   dashboardSections.forEach(({ button, heading }) => {

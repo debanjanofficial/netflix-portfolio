@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Banner from './components/Banner';
 import Row from './components/Row';
 import Footer from './components/Footer';
+import Intro from './components/Intro';
 import Profile from './components/Profile';
 import RecruiterDashboard from './components/RecruiterDashboard';
 import VisitorDashboard from './components/VisitorDashboard';
@@ -18,7 +19,7 @@ import { skillGroups, experiences, educationEntries, projectEntries, publication
 import { translations } from './i18n/translations';
 import { LanguageCode } from './context/LanguageContext';
 
-type AppState = 'profile' | 'main' | 'notFound';
+type AppState = 'intro' | 'profile' | 'main' | 'notFound';
 type ProfileSection = 'dashboard' | 'skills' | 'experience' | 'education' | 'research' | 'projects';
 
 interface AuthUser {
@@ -44,6 +45,7 @@ interface HeaderSearchResult {
 const STORAGE_KEY = 'portfolioUser';
 const PROFILE_KEY = 'portfolioProfile';
 const RECRUITER_SECTION_KEY = 'portfolioRecruiterSection';
+const INTRO_SESSION_KEY = 'portfolioIntroSeen';
 
 const readStoredUser = (): AuthUser | null => {
   if (typeof window === 'undefined') {
@@ -108,6 +110,9 @@ function App() {
   const [visitorSection, setVisitorSection] = useState<ProfileSection>('dashboard');
   const [appState, setAppState] = useState<AppState>(() => {
     const storedProfile = readStoredProfile();
+    if (typeof window !== 'undefined' && !window.sessionStorage.getItem(INTRO_SESSION_KEY)) {
+      return 'intro';
+    }
     return storedProfile ? 'main' : 'profile';
   });
   const [skillsFocusId, setSkillsFocusId] = useState<string | undefined>();
@@ -552,6 +557,15 @@ function App() {
       },
     ],
   };
+
+  const handleIntroComplete = () => {
+    window.sessionStorage.setItem(INTRO_SESSION_KEY, 'true');
+    setAppState(profile ? 'main' : 'profile');
+  };
+
+  if (appState === 'intro') {
+    return <Intro onIntroComplete={handleIntroComplete} />;
+  }
 
   if (appState === 'profile') {
     return <Profile onProfileSelect={handleProfileSelect} viewerName={user.firstName} />;

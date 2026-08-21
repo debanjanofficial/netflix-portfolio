@@ -16,7 +16,7 @@ const Banner: React.FC<BannerProps> = ({ profile }) => {
       <section className="banner banner--recruiter">
         <video
           className="banner__video"
-          src="/a-young-handsome-businessman-student-in-a-suit-comes-with-a-briefcase-at-the-s-SBV-348637057-preview.mp4"
+          src="/portfolio-hero.mp4"
           autoPlay
           loop
           muted
