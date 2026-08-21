@@ -79,6 +79,12 @@ test('offers every language and opens the localized help centre', () => {
   expect(screen.getAllByRole('menuitemradio')).toHaveLength(13);
   fireEvent.click(screen.getByRole('menuitemradio', { name: 'Português' }));
   expect(screen.getByRole('button', { name: 'Início' })).toBeInTheDocument();
+  expect(screen.getByText(/Mestre em Ciência de Dados e investigador em IA aplicada/)).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: 'Projetos' }));
+  expect(screen.getAllByText('SENSATION: Sistema de navegação para deficientes visuais').length).toBeGreaterThan(0);
+  expect(screen.getByText(/segmentação semântica DeepLabv3\+ ResNet50/)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Voltar ao painel' }));
 
   const profileMenu = screen.getByText('Recrutador').closest('[role="button"]');
   expect(profileMenu).not.toBeNull();

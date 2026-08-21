@@ -1,4 +1,5 @@
 import { LanguageCode } from '../context/LanguageContext';
+import { generatedResumeTranslations } from './resumeTranslations.generated';
 
 type Localized<T> = { en: T; de: T } & Partial<Record<Exclude<LanguageCode, 'en' | 'de'>, T>>;
 
@@ -300,3 +301,56 @@ export const bannerSummary: Localized<string[]> = {
     'Ich verbinde fundierte Machine-Learning-Forschung mit Production Engineering und überführe neue Ansätze in skalierbare, erklärbare Lösungen für reale wissenschaftliche und industrielle Herausforderungen.',
   ],
 };
+
+type GeneratedLanguageCode = keyof typeof generatedResumeTranslations;
+type GeneratedLocale = (typeof generatedResumeTranslations)[GeneratedLanguageCode];
+
+(Object.entries(generatedResumeTranslations) as Array<[GeneratedLanguageCode, GeneratedLocale]>).forEach(
+  ([code, locale]) => {
+    const language = code as LanguageCode;
+    bannerSummary[language] = [...locale.banner];
+    researchInterests[language] = [...locale.researchInterests];
+
+    skillGroups.forEach((group, index) => {
+      group.label[language] = locale.skillLabels[index];
+      group.items[language] = group.id === 'spoken-languages'
+        ? [...locale.spokenLanguages]
+        : [...group.items.en];
+    });
+
+    experiences.forEach((entry, index) => {
+      const translated = locale.experiences[index];
+      entry.content[language] = {
+        ...entry.content.en,
+        ...translated,
+        bullets: [...translated.bullets],
+      };
+    });
+
+    educationEntries.forEach((entry, index) => {
+      const translated = locale.education[index];
+      entry.content[language] = {
+        ...entry.content.en,
+        ...translated,
+        bullets: [...translated.bullets],
+      };
+    });
+
+    projectEntries.forEach((entry, index) => {
+      const translated = locale.projects[index];
+      entry.content[language] = {
+        ...entry.content.en,
+        ...translated,
+        tech: [...entry.content.en.tech],
+        bullets: [...translated.bullets],
+      };
+    });
+
+    publications.forEach((entry, index) => {
+      entry.content[language] = {
+        ...entry.content.en,
+        status: locale.publicationStatuses[index],
+      };
+    });
+  },
+);
