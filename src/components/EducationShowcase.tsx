@@ -1,213 +1,53 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import './EducationShowcase.css';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { educationEntries } from '../content/data';
+import ShowcaseLayout from './ShowcaseLayout';
 
-interface EducationShowcaseProps {
-  onBack: () => void;
-  initialEducationId?: string;
-}
+interface EducationShowcaseProps { onBack: () => void; initialEducationId?: string; }
 
 const EducationShowcase: React.FC<EducationShowcaseProps> = ({ onBack, initialEducationId }) => {
   const { language, t } = useLanguage();
-  const [activeId, setActiveId] = useState<string>(initialEducationId ?? educationEntries[0].id);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [reportOpen, setReportOpen] = useState(false);
-  const [reportText, setReportText] = useState('');
-  const [reportStatus, setReportStatus] = useState<'idle' | 'sent' | 'error'>('idle');
+  const [activeId, setActiveId] = useState(initialEducationId ?? educationEntries[0].id);
 
-  useEffect(() => {
-    const node = videoRef.current;
-    if (!node) {
-      return;
-    }
-
-    node.currentTime = 0;
-    const playPromise = node.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        // Autoplay might be blocked; ignore to avoid console noise.
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    if (initialEducationId) {
-      setActiveId(initialEducationId);
-    }
-  }, [initialEducationId]);
-
-  const activeEducationEntry = useMemo(() => {
-    return educationEntries.find((item) => item.id === activeId) ?? educationEntries[0];
-  }, [activeId]);
-
-  const content = activeEducationEntry.content[language] ?? activeEducationEntry.content.en;
-
-  const openReport = () => {
-    setReportText('');
-    setReportStatus('idle');
-    setReportOpen(true);
-  };
-
-  const closeReport = () => {
-    setReportOpen(false);
-    setReportText('');
-    setReportStatus('idle');
-  };
-
-  const submitReport = () => {
-    if (!reportText.trim()) {
-      setReportStatus('error');
-      return;
-    }
-    setReportStatus('sent');
-    setTimeout(() => {
-      closeReport();
-    }, 1500);
-  };
+  useEffect(() => { if (initialEducationId) setActiveId(initialEducationId); }, [initialEducationId]);
+  const activeEntry = useMemo(() => educationEntries.find((entry) => entry.id === activeId) ?? educationEntries[0], [activeId]);
+  const content = activeEntry.content[language] ?? activeEntry.content.en;
 
   return (
-    <section className="education">
-      <video
-        ref={videoRef}
-        className="education__video"
-        src="/education.mp4"
-        autoPlay
-        muted
-        playsInline
-        preload="metadata"
-        onEnded={() => {
-          videoRef.current?.pause();
-        }}
-      />
-      <div className="education__overlay" aria-hidden="true" />
-      <div className="education__topBar">
-        <button
-          type="button"
-          className="education__iconButton"
-          aria-label="Go back to dashboard"
-          onClick={onBack}
-        >
-          <span aria-hidden="true">←</span>
-        </button>
-        <button
-          type="button"
-          className="education__iconButton"
-          aria-label="Report an issue"
-          onClick={openReport}
-        >
-          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-            <path d="M5 3v18h2v-7h7l1.5 3H21L17 9l4-6h-8l-1.5 3H7V3H5z" />
-          </svg>
-        </button>
-      </div>
-      <div className="education__content">
-        <div className="education__heading">
-          <div className="education__titleRow">
-            <h1 className="education__title">{t('education.title') || 'Education'}</h1>
-            <div className="education__infoWrapper">
-              <button
-                type="button"
-                className="education__infoButton"
-                aria-describedby="education-info-tooltip"
-              >
-                i
-              </button>
-              <div className="education__tooltip" role="tooltip" id="education-info-tooltip">
-                {t('education.info')}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="education__panel">
-          <div className="education__tabs" role="tablist">
-            {educationEntries.map((item) => {
-              const localised = item.content[language] ?? item.content.en;
+    <ShowcaseLayout
+      eyebrow={t('education.eyebrow')}
+      title={t('education.title')}
+      description={t('education.info')}
+      onBack={onBack}
+      sidebar={(
+        <>
+          <h2 className="showcase__sectionTitle">{t('education.degrees')}</h2>
+          <div className="showcase__tabs" role="tablist">
+            {educationEntries.map((entry) => {
+              const localised = entry.content[language] ?? entry.content.en;
               return (
-                <button
-                  key={item.id}
-                  type="button"
-                  className={`education__tab ${item.id === activeEducationEntry.id ? 'education__tab--active' : ''}`}
-                  onClick={() => setActiveId(item.id)}
-                  role="tab"
-                  aria-selected={item.id === activeEducationEntry.id}
-                >
+                <button key={entry.id} type="button" role="tab" aria-selected={entry.id === activeEntry.id}
+                  className={`showcase__tab ${entry.id === activeEntry.id ? 'showcase__tab--active' : ''}`}
+                  onClick={() => setActiveId(entry.id)}>
                   {localised.degree}
                 </button>
               );
             })}
           </div>
-          <div className="education__details" role="tabpanel">
-            <div className="education__meta">
-              <h2 className="education__degree">{content.degree}</h2>
-              <a
-                className="education__institution"
-                href={content.institutionUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {content.institution}
-              </a>
-              <span className="education__major">{content.location} · {content.duration}</span>
-            </div>
-            <div className="education__section">
-              <h3>{t('education.thesis')}</h3>
-              <p className="education__thesisTitle">{content.thesisTitle}</p>
-              <p className="education__supervisors">{t('education.supervisors')}: {content.supervisors}</p>
-              <ul className="education__thesisBullets">
-                {content.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      {reportOpen && (
-        <div className="education__modalBackdrop" role="dialog" aria-modal="true">
-          <div className="education__modal">
-            <h2 className="education__modalTitle">{t('report.title')}</h2>
-            <label className="education__modalLabel" htmlFor="education-report-input">
-              {t('report.label')}
-            </label>
-            <textarea
-              id="education-report-input"
-              className="education__textarea"
-              placeholder={t('report.placeholder')}
-              value={reportText}
-              onChange={(event) => {
-                setReportText(event.target.value);
-                setReportStatus('idle');
-              }}
-            />
-            {reportStatus === 'error' && (
-              <p className="education__modalMessage education__modalMessage--error">
-                {t('report.error')}
-              </p>
-            )}
-            {reportStatus === 'sent' && (
-              <p className="education__modalMessage education__modalMessage--success">
-                {t('report.success')}
-              </p>
-            )}
-            <div className="education__modalActions">
-              <button
-                type="button"
-                className="education__modalButton education__modalButton--secondary"
-                onClick={closeReport}
-              >
-                {t('report.cancel')}
-              </button>
-              <button
-                type="button"
-                className="education__modalButton education__modalButton--primary"
-                onClick={submitReport}
-              >
-                {t('report.send')}
-              </button>
-            </div>
-          </div>
-        </div>
+        </>
       )}
-    </section>
+    >
+      <h2 className="showcase__sectionTitle">{t('education.academicRecord')}</h2>
+      <article className="showcase__card">
+        <div className="showcase__meta"><span>{content.location}</span><span>{content.duration}</span></div>
+        <h2>{content.degree}</h2>
+        <a className="showcase__link" href={content.institutionUrl} target="_blank" rel="noopener noreferrer">{content.institution}</a>
+        <p className="showcase__label">{t('education.thesis')}</p>
+        <h3>{content.thesisTitle}</h3>
+        <p className="showcase__subtle">{t('education.supervisors')}: {content.supervisors}</p>
+        <ul className="showcase__list">{content.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>
+      </article>
+    </ShowcaseLayout>
   );
 };
 
