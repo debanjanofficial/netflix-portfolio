@@ -150,6 +150,10 @@ function App() {
     setResearchFocusId(undefined);
   }, []);
 
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, []);
+
   const navigateToRecruiterSection = useCallback(
     (section: ProfileSection, focusId?: string) => {
       clearFocusStates();
@@ -167,8 +171,9 @@ function App() {
       setProfile('recruiter');
       setAppState('main');
       setRecruiterSection(section);
+      scrollToTop();
     },
-    [clearFocusStates],
+    [clearFocusStates, scrollToTop],
   );
 
   const navigateToVisitorSection = useCallback(
@@ -188,8 +193,9 @@ function App() {
       setProfile('visitor');
       setAppState('main');
       setVisitorSection(section);
+      scrollToTop();
     },
-    [clearFocusStates],
+    [clearFocusStates, scrollToTop],
   );
 
   const searchItems = useMemo<SearchIndexItem[]>(() => {
@@ -499,11 +505,13 @@ function App() {
   const handleSkillsBack = () => {
     clearFocusStates();
     setRecruiterSection('dashboard');
+    scrollToTop();
   };
 
   const handleVisitorSectionBack = () => {
     clearFocusStates();
     setVisitorSection('dashboard');
+    scrollToTop();
   };
 
   const projects = {
