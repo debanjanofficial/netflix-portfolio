@@ -102,7 +102,7 @@ Translations and labels are managed in `src/i18n/translations.ts`.
 
 ## Media Credit
 
-The home hero uses the Pexels video [Young professional working on a laptop in a bright office setting](https://www.pexels.com/video/a-man-using-a-laptop-in-work-6773859/) by Kindel Media under the [Pexels license](https://www.pexels.com/license/).
+The home hero uses the face-free Pexels video [Close-up of hands typing on a laptop in a tech environment](https://www.pexels.com/video/person-typing-fast-852421/) by Distill under CC0.
 
 ## Author
 
