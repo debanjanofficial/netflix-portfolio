@@ -1,21 +1,23 @@
 import { LanguageCode } from '../context/LanguageContext';
 
+type Localized<T> = { en: T; de: T } & Partial<Record<Exclude<LanguageCode, 'en' | 'de'>, T>>;
+
 export interface SkillGroup {
   id: string;
-  label: Record<LanguageCode, string>;
-  items: Record<LanguageCode, string[]>;
+  label: Localized<string>;
+  items: Localized<string[]>;
 }
 
 export interface ExperienceEntry {
   id: string;
-  content: Record<LanguageCode, {
+  content: Localized<{
     role: string; company: string; location: string; duration: string; bullets: string[];
   }>;
 }
 
 export interface EducationEntry {
   id: string;
-  content: Record<LanguageCode, {
+  content: Localized<{
     degree: string; institution: string; institutionUrl: string; location: string;
     duration: string; thesisTitle: string; supervisors: string; bullets: string[];
   }>;
@@ -23,14 +25,14 @@ export interface EducationEntry {
 
 export interface ProjectEntry {
   id: string;
-  content: Record<LanguageCode, {
+  content: Localized<{
     title: string; url?: string; context: string; tech: string[]; bullets: string[];
   }>;
 }
 
 export interface PublicationEntry {
   id: string;
-  content: Record<LanguageCode, {
+  content: Localized<{
     citation: string; title: string; venue: string; status: string;
   }>;
 }
@@ -46,7 +48,7 @@ export const personalDetails = {
   githubUrl: 'https://github.com/debanjanofficial',
 };
 
-export const researchInterests: Record<LanguageCode, string[]> = {
+export const researchInterests: Localized<string[]> = {
   en: ['Machine Learning', 'Explainable AI', 'Unsupervised Anomaly Detection', 'Retrieval-Augmented Generation (RAG)', 'Applied Computer Vision', 'Edge Inference'],
   de: ['Machine Learning', 'Erklärbare KI', 'Unüberwachte Anomalieerkennung', 'Retrieval-Augmented Generation (RAG)', 'Angewandte Computer Vision', 'Edge-Inferenz'],
 };
@@ -288,7 +290,7 @@ export const publications: PublicationEntry[] = [
   },
 ];
 
-export const bannerSummary: Record<LanguageCode, string[]> = {
+export const bannerSummary: Localized<string[]> = {
   en: [
     'Data Science M.Sc. graduate and applied AI researcher developing intelligent systems for multivariate time-series analysis, anomaly detection, retrieval-augmented generation, and computer vision.',
     'I bridge rigorous machine learning research with production engineering—translating novel ideas into scalable, explainable solutions for real-world scientific and industrial challenges.',

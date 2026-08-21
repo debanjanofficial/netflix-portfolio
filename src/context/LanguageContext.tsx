@@ -1,6 +1,22 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
-export type LanguageCode = 'en' | 'de';
+export type LanguageCode = 'en' | 'de' | 'no' | 'fi' | 'sv' | 'da' | 'it' | 'nl' | 'fr' | 'es' | 'pl' | 'cs' | 'pt';
+
+export const languageOptions: Array<{ code: LanguageCode; label: string }> = [
+  { code: 'en', label: 'English' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'no', label: 'Norsk' },
+  { code: 'fi', label: 'Suomi' },
+  { code: 'sv', label: 'Svenska' },
+  { code: 'da', label: 'Dansk' },
+  { code: 'it', label: 'Italiano' },
+  { code: 'nl', label: 'Nederlands' },
+  { code: 'fr', label: 'Français' },
+  { code: 'es', label: 'Español' },
+  { code: 'pl', label: 'Polski' },
+  { code: 'cs', label: 'Čeština' },
+  { code: 'pt', label: 'Português' },
+];
 
 interface LanguageContextValue {
   language: LanguageCode;
@@ -10,10 +26,9 @@ interface LanguageContextValue {
 
 const STORAGE_KEY = 'portfolioLanguage';
 
-const defaultTranslations: Record<LanguageCode, Record<string, string>> = {
-  en: {},
-  de: {},
-};
+const supportedLanguageCodes = languageOptions.map(({ code }) => code);
+const isLanguageCode = (value: string | null): value is LanguageCode =>
+  value !== null && supportedLanguageCodes.includes(value as LanguageCode);
 
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
@@ -27,8 +42,8 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children, tr
     if (typeof window === 'undefined') {
       return 'en';
     }
-    const stored = window.localStorage.getItem(STORAGE_KEY) as LanguageCode | null;
-    return stored === 'de' ? 'de' : 'en';
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    return isLanguageCode(stored) ? stored : 'en';
   });
 
   useEffect(() => {
@@ -39,10 +54,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children, tr
   }, [language]);
 
   const allTranslations = useMemo(() => {
-    return {
-      en: { ...defaultTranslations.en, ...translations.en },
-      de: { ...defaultTranslations.de, ...translations.de },
-    };
+    return Object.fromEntries(
+      supportedLanguageCodes.map((code) => [code, translations[code] ?? {}]),
+    ) as Record<LanguageCode, Record<string, string>>;
   }, [translations]);
 
   const value = useMemo<LanguageContextValue>(() => {

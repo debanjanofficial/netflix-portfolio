@@ -14,12 +14,13 @@ import EducationShowcase from './components/EducationShowcase';
 import ProjectsShowcase from './components/ProjectsShowcase';
 import ResearchShowcase from './components/ResearchShowcase';
 import SearchNotFound from './components/SearchNotFound';
+import HelpCenter from './components/HelpCenter';
 import { useLanguage } from './context/LanguageContext';
 import { skillGroups, experiences, educationEntries, projectEntries, publications, researchInterests, personalDetails } from './content/data';
 import { translations } from './i18n/translations';
 import { LanguageCode } from './context/LanguageContext';
 
-type AppState = 'intro' | 'profile' | 'main' | 'notFound';
+type AppState = 'intro' | 'profile' | 'main' | 'help' | 'notFound';
 type ProfileSection = 'dashboard' | 'skills' | 'experience' | 'education' | 'research' | 'projects';
 
 interface AuthUser {
@@ -32,7 +33,7 @@ interface SearchIndexItem {
   id: string;
   type: 'skills' | 'experience' | 'education' | 'research' | 'projects';
   targetId: string;
-  label: Record<LanguageCode, string>;
+  label: { en: string; de: string } & Partial<Record<Exclude<LanguageCode, 'en' | 'de'>, string>>;
   keywords: string[];
 }
 
@@ -220,7 +221,7 @@ function App() {
     };
 
     skillGroups.forEach((group) => {
-      const label: Record<LanguageCode, string> = {
+      const label: SearchIndexItem['label'] = {
         en: `${translations.en['recruiter.section.skills']} – ${group.label.en}`,
         de: `${translations.de['recruiter.section.skills']} – ${group.label.de ?? group.label.en}`,
       };
@@ -239,7 +240,7 @@ function App() {
     });
 
     experiences.forEach((entry) => {
-      const label: Record<LanguageCode, string> = {
+      const label: SearchIndexItem['label'] = {
         en: `${translations.en['recruiter.section.experience']} – ${entry.content.en.role}`,
         de: `${translations.de['recruiter.section.experience']} – ${entry.content.de.role}`,
       };
@@ -262,7 +263,7 @@ function App() {
     });
 
     educationEntries.forEach((entry) => {
-      const label: Record<LanguageCode, string> = {
+      const label: SearchIndexItem['label'] = {
         en: `${translations.en['recruiter.section.education']} – ${entry.content.en.degree}`,
         de: `${translations.de['recruiter.section.education']} – ${entry.content.de.degree}`,
       };
@@ -288,7 +289,7 @@ function App() {
     });
 
     projectEntries.forEach((entry) => {
-      const label: Record<LanguageCode, string> = {
+      const label: SearchIndexItem['label'] = {
         en: `${translations.en['recruiter.section.projects']} – ${entry.content.en.title}`,
         de: `${translations.de['recruiter.section.projects']} – ${entry.content.de.title}`,
       };
@@ -311,7 +312,7 @@ function App() {
     });
 
     publications.forEach((entry) => {
-      const label: Record<LanguageCode, string> = {
+      const label: SearchIndexItem['label'] = {
         en: `${translations.en['recruiter.section.research']} – ${entry.content.en.title}`,
         de: `${translations.de['recruiter.section.research']} – ${entry.content.de.title}`,
       };
@@ -402,6 +403,16 @@ function App() {
     setAppState('main');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [profile, clearFocusStates]);
+
+  const handleOpenHelp = useCallback(() => {
+    setAppState('help');
+    scrollToTop();
+  }, [scrollToTop]);
+
+  const handleCloseHelp = useCallback(() => {
+    setAppState('main');
+    scrollToTop();
+  }, [scrollToTop]);
 
   const handleOpenLinkedIn = useCallback(() => {
     window.open(personalDetails.linkedinUrl, '_blank');
@@ -586,6 +597,7 @@ function App() {
       onExitToProfiles={handleExitToProfiles}
       onSignOut={handleSignOut}
       onAccount={handleExitToProfiles}
+      onHelp={handleOpenHelp}
       onHome={handleHomeNavigation}
       onOpenLinkedIn={handleOpenLinkedIn}
       onOpenCV={handleOpenCV}
@@ -604,6 +616,10 @@ function App() {
         <SearchNotFound query={notFoundQuery} onBack={handleSearchBack} />
       </div>
     );
+  }
+
+  if (appState === 'help') {
+    return <HelpCenter onBack={handleCloseHelp} />;
   }
 
   return (

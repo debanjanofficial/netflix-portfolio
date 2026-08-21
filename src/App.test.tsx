@@ -61,3 +61,32 @@ test.each(['Recruiter', 'Visitor'])('returns from every section to the %s dashbo
 
   unmount();
 });
+
+test('offers every language and opens the localized help centre', () => {
+  window.localStorage.clear();
+  window.sessionStorage.clear();
+  window.scrollTo = jest.fn();
+  Object.defineProperty(HTMLMediaElement.prototype, 'play', {
+    configurable: true,
+    value: jest.fn().mockResolvedValue(undefined),
+  });
+
+  render(<LanguageProvider translations={translations}><App /></LanguageProvider>);
+  fireEvent.animationEnd(screen.getByText('Debanjan'));
+  fireEvent.click(screen.getByText('Recruiter'));
+
+  fireEvent.click(screen.getByRole('button', { name: 'Language' }));
+  expect(screen.getAllByRole('menuitemradio')).toHaveLength(13);
+  fireEvent.click(screen.getByRole('menuitemradio', { name: 'Português' }));
+  expect(screen.getByRole('button', { name: 'Início' })).toBeInTheDocument();
+
+  const profileMenu = screen.getByText('Recrutador').closest('[role="button"]');
+  expect(profileMenu).not.toBeNull();
+  fireEvent.click(profileMenu as HTMLElement);
+  fireEvent.click(screen.getByRole('button', { name: 'Centro de ajuda' }));
+  expect(screen.getByRole('heading', { name: 'Centro de ajuda', level: 1 })).toBeInTheDocument();
+  expect(screen.getByText('Acessibilidade')).toBeInTheDocument();
+
+  fireEvent.click(screen.getByRole('button', { name: /Voltar ao portefólio/ }));
+  expect(screen.getByRole('button', { name: 'Início' })).toBeInTheDocument();
+});

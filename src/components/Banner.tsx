@@ -29,7 +29,7 @@ const Banner: React.FC<BannerProps> = ({ profile }) => {
             <FalconLogo size="large" />
           </div>
           <h1 className="banner__title banner__title--recruiter">Debanjan Chakraborty</h1>
-          {bannerSummary[language].map((line) => (
+          {(bannerSummary[language] ?? bannerSummary.en).map((line) => (
             <p key={line} className="banner__summary">
               {line}
             </p>

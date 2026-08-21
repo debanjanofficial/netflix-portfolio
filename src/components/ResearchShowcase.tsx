@@ -17,7 +17,7 @@ const ResearchShowcase: React.FC<ResearchShowcaseProps> = ({ onBack, initialPubl
       sidebar={(
         <>
           <h2 className="showcase__sectionTitle">{t('research.interests')}</h2>
-          <div className="showcase__chips">{researchInterests[language].map((interest) => <span key={interest}>{interest}</span>)}</div>
+          <div className="showcase__chips">{(researchInterests[language] ?? researchInterests.en).map((interest) => <span key={interest}>{interest}</span>)}</div>
         </>
       )}
     >

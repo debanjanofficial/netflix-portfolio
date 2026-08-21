@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './Header.css';
-import { useLanguage, LanguageCode } from '../context/LanguageContext';
+import { useLanguage, LanguageCode, languageOptions } from '../context/LanguageContext';
 
 interface SearchResultOption {
   id: string;
@@ -14,6 +14,7 @@ interface HeaderProps {
   onExitToProfiles: () => void;
   onSignOut: () => void;
   onAccount: () => void;
+  onHelp: () => void;
   onHome: () => void;
   onOpenLinkedIn: () => void;
   onOpenCV: () => void;
@@ -30,6 +31,7 @@ const Header: React.FC<HeaderProps> = ({
   onExitToProfiles,
   onSignOut,
   onAccount,
+  onHelp,
   onHome,
   onOpenLinkedIn,
   onOpenCV,
@@ -214,20 +216,18 @@ const Header: React.FC<HeaderProps> = ({
             </button>
             {languageMenuOpen && (
               <div className="header__languageMenu" role="menu">
-                <button
-                  type="button"
-                  className={`header__languageOption ${language === 'en' ? 'active' : ''}`}
-                  onClick={() => handleLanguageSelect('en')}
-                >
-                  English
-                </button>
-                <button
-                  type="button"
-                  className={`header__languageOption ${language === 'de' ? 'active' : ''}`}
-                  onClick={() => handleLanguageSelect('de')}
-                >
-                  Deutsch
-                </button>
+                {languageOptions.map((option) => (
+                  <button
+                    key={option.code}
+                    type="button"
+                    role="menuitemradio"
+                    aria-checked={language === option.code}
+                    className={`header__languageOption ${language === option.code ? 'active' : ''}`}
+                    onClick={() => handleLanguageSelect(option.code)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -385,7 +385,7 @@ const Header: React.FC<HeaderProps> = ({
                 type="button"
                 className="header__dropdownItem"
                 onClick={() => {
-                  window.alert('Help centre coming soon');
+                  onHelp();
                   setDropdownOpen(false);
                 }}
               >
