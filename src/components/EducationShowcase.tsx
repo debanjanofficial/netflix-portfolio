@@ -148,21 +148,15 @@ const EducationShowcase: React.FC<EducationShowcaseProps> = ({ onBack, initialEd
               >
                 {content.institution}
               </a>
-              <span className="education__major">{content.major}</span>
+              <span className="education__major">{content.location} · {content.duration}</span>
             </div>
             <div className="education__section">
-              <h3>{t('education.courses')}</h3>
-              <ul className="education__courses">
-                {content.courses.map((course) => (
-                  <li key={course} className="education__course">
-                    {course}
-                  </li>
-                ))}
+              <h3>{t('education.thesis')}</h3>
+              <p className="education__thesisTitle">{content.thesisTitle}</p>
+              <p className="education__supervisors">{t('education.supervisors')}: {content.supervisors}</p>
+              <ul className="education__thesisBullets">
+                {content.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
               </ul>
-            </div>
-            <div className="education__section">
-              <h3>{content.thesisTitle}</h3>
-              <p className="education__thesisDescription">{content.thesisDescription}</p>
             </div>
           </div>
         </div>

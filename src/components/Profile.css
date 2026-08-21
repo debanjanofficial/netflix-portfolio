@@ -25,11 +25,18 @@
   cursor: pointer;
 }
 
-.profile__item img {
+.profile__avatar {
   width: 150px;
   height: 150px;
   border-radius: 5px;
   margin-bottom: 1rem;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #2a2f45, #59627f);
+  color: #fff;
+  font-size: 4rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
 .profile__item span {

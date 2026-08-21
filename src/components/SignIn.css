@@ -4,7 +4,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url('https://assets.nflxext.com/ffe/siteui/vlv3/0e1c6286-5373-4f16-9cdf-14da65936501/aa4cead3-35cf-41aa-94fa-5e2b2745d80f/US-en-20230724-popsignuptwoweeks-perspective_alpha_website_medium.jpg');
+  background:
+    radial-gradient(circle at 20% 20%, rgba(229, 9, 20, 0.24), transparent 28rem),
+    radial-gradient(circle at 80% 10%, rgba(40, 95, 255, 0.2), transparent 30rem),
+    linear-gradient(135deg, #08090f 0%, #121826 48%, #050507 100%);
   background-size: cover;
   background-position: center;
   color: #fff;

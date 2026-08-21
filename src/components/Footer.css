@@ -6,17 +6,17 @@
   font-size: 13px;
 }
 
-.footer__links {
+.footer__social {
   display: flex;
-  justify-content: space-between;
+  gap: 20px;
   margin-bottom: 20px;
 }
 
-.footer__links a {
+.footer__social a {
   color: #757575;
   text-decoration: none;
 }
 
-.footer__links a:hover {
+.footer__social a:hover {
   text-decoration: underline;
 }

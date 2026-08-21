@@ -136,9 +136,14 @@
 .header__avatar {
   width: 32px;
   height: 32px;
-  object-fit: cover;
   border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.6);
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #2a2f45, #59627f);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .header__profileName {

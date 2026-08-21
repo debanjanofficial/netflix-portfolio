@@ -218,6 +218,26 @@
   font-size: 0.95rem;
 }
 
+.experience__location {
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.95rem;
+}
+
+.experience {
+  height: auto;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.experience__content {
+  position: relative;
+  inset: auto;
+  min-height: 100vh;
+  box-sizing: border-box;
+  justify-content: flex-end;
+  padding-top: 110px;
+}
+
 .experience__bullets {
   margin: 0;
   padding-left: 20px;

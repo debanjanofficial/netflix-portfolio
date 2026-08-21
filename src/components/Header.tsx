@@ -96,13 +96,13 @@ const Header: React.FC<HeaderProps> = ({
     if (!profile) {
       return t('header.profile');
     }
-    return profile === 'recruiter' ? t('profile.recruiter') : t('profile.stalker');
+    return profile === 'recruiter' ? t('profile.recruiter') : t('profile.visitor');
   }, [profile, t]);
 
   const otherProfiles = useMemo(() => {
     const options = [
       { id: 'recruiter', label: t('header.dropdown.recruiter') },
-      { id: 'stalker', label: t('header.dropdown.stalker') },
+      { id: 'visitor', label: t('header.dropdown.visitor') },
     ];
     if (!profile) {
       return options;
@@ -308,11 +308,9 @@ const Header: React.FC<HeaderProps> = ({
             }
           }}
         >
-          <img
-            className="header__avatar"
-            src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png"
-            alt={`${profileLabel} avatar`}
-          />
+          <span className="header__avatar" aria-hidden="true">
+            {profileLabel.charAt(0)}
+          </span>
           <span className="header__profileName">{profileLabel}</span>
           <svg
             className={`header__caret ${dropdownOpen ? 'header__caret--open' : ''}`}

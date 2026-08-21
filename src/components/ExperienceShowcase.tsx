@@ -140,6 +140,7 @@ const ExperienceShowcase: React.FC<ExperienceShowcaseProps> = ({ onBack, initial
             <div className="experience__meta">
               <h2 className="experience__role">{experienceContent.role}</h2>
               <span className="experience__company">{experienceContent.company}</span>
+              <span className="experience__location">{experienceContent.location}</span>
               <span className="experience__duration">{experienceContent.duration}</span>
             </div>
             <ul className="experience__bullets">

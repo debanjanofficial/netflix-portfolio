@@ -6,6 +6,7 @@ const sections = [
   { id: 'skills', translationKey: 'recruiter.section.skills' },
   { id: 'experience', translationKey: 'recruiter.section.experience' },
   { id: 'education', translationKey: 'recruiter.section.education' },
+  { id: 'research', translationKey: 'recruiter.section.research' },
   { id: 'projects', translationKey: 'recruiter.section.projects' },
   { id: 'contact', translationKey: 'recruiter.section.contact' },
 ];

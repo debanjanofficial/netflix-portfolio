@@ -18,7 +18,7 @@
   letter-spacing: 2px;
   transform-origin: center;
   will-change: transform, opacity;
-  /* Combined Netflix-like intro: zoom in, hold, then zoom out through center */
+  /* Portfolio intro: zoom in, hold, then zoom out through center */
   animation: logoIntro 3.2s ease-in-out forwards;
 }
 

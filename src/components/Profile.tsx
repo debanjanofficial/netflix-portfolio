@@ -18,12 +18,16 @@ const Profile: React.FC<ProfileProps> = ({ onProfileSelect, viewerName }) => {
       <h1 className="profile__title">{heading}</h1>
       <div className="profile__list">
         <div className="profile__item" onClick={() => onProfileSelect('recruiter')}>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="Recruiter" />
+          <div className="profile__avatar" aria-hidden="true">
+            R
+          </div>
           <span>{t('profile.recruiter')}</span>
         </div>
-        <div className="profile__item" onClick={() => onProfileSelect('stalker')}>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="Stalker" />
-          <span>{t('profile.stalker')}</span>
+        <div className="profile__item" onClick={() => onProfileSelect('visitor')}>
+          <div className="profile__avatar" aria-hidden="true">
+            V
+          </div>
+          <span>{t('profile.visitor')}</span>
         </div>
       </div>
     </div>

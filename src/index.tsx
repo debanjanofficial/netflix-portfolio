@@ -6,17 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { LanguageProvider } from './context/LanguageContext';
 import { translations } from './i18n/translations';
-import { AppAuthProvider } from './context/AuthProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
   <React.StrictMode>
-    <AppAuthProvider>
-      <LanguageProvider translations={translations}>
-        <App />
-      </LanguageProvider>
-    </AppAuthProvider>
+    <LanguageProvider translations={translations}>
+      <App />
+    </LanguageProvider>
   </React.StrictMode>,
 );
 

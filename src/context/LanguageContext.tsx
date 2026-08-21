@@ -8,7 +8,7 @@ interface LanguageContextValue {
   t: (key: string) => string;
 }
 
-const STORAGE_KEY = 'netflixPortfolioLanguage';
+const STORAGE_KEY = 'portfolioLanguage';
 
 const defaultTranslations: Record<LanguageCode, Record<string, string>> = {
   en: {},

@@ -2,7 +2,7 @@ import React from 'react';
 import './Banner.css';
 import FalconLogo from './FalconLogo';
 import { useLanguage } from '../context/LanguageContext';
-import { bannerSummary } from '../content/data';
+import { bannerSummary, personalDetails } from '../content/data';
 
 interface BannerProps {
   profile: string;
@@ -10,10 +10,8 @@ interface BannerProps {
 
 const Banner: React.FC<BannerProps> = ({ profile }) => {
   const { language, t } = useLanguage();
-  // Determine if recruiter view
-  const isRecruiter = profile === 'recruiter';
-  if (isRecruiter) {
-    // Recruiter hero with name and summary
+  const isPortfolioProfile = profile === 'recruiter' || profile === 'visitor';
+  if (isPortfolioProfile) {
     return (
       <section className="banner banner--recruiter">
         <video
@@ -36,12 +34,18 @@ const Banner: React.FC<BannerProps> = ({ profile }) => {
               {line}
             </p>
           ))}
+          <div className="banner__contact" aria-label="Contact details">
+            <span>{personalDetails.location}</span>
+            <a href={personalDetails.emailUrl}>{personalDetails.email}</a>
+            <a href={personalDetails.phoneUrl}>{personalDetails.phone}</a>
+            <a href={personalDetails.githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
+          </div>
         </div>
         <div className="banner--fadeBottom" />
       </section>
     );
   }
-  // Default Netflix-style hero
+  // Default portfolio hero
   return (
     <header
       className="banner"

@@ -1,16 +1,17 @@
 import React from 'react';
 import './Footer.css';
+import { personalDetails } from '../content/data';
 
 const Footer = () => {
   return (
     <div className="footer">
       <div className="footer__social">
-        <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">Twitter</a>
+        <a href={personalDetails.githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href={personalDetails.linkedinUrl} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href={personalDetails.emailUrl}>Email</a>
       </div>
       <div className="footer__copy">
-        &copy; 2025 Debanjan Chakrborty. All Rights Reserved.
+        &copy; 2026 Debanjan Chakraborty. All Rights Reserved.
       </div>
     </div>
   );

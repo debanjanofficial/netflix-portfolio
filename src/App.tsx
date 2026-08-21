@@ -4,33 +4,32 @@ import Header from './components/Header';
 import Banner from './components/Banner';
 import Row from './components/Row';
 import Footer from './components/Footer';
-import Intro from './components/Intro';
 import Profile from './components/Profile';
 import RecruiterDashboard from './components/RecruiterDashboard';
-import StalkerDashboard from './components/StalkerDashboard';
+import VisitorDashboard from './components/VisitorDashboard';
 import SkillsShowcase from './components/SkillsShowcase';
 import ExperienceShowcase from './components/ExperienceShowcase';
 import EducationShowcase from './components/EducationShowcase';
 import ProjectsShowcase from './components/ProjectsShowcase';
-import SignIn, { SignInData, AuthProvider } from './components/SignIn';
-import AccountPage from './components/AccountPage';
+import ResearchShowcase from './components/ResearchShowcase';
 import SearchNotFound from './components/SearchNotFound';
 import { useLanguage } from './context/LanguageContext';
-import { skillGroups, experiences, educationEntries, projectEntries } from './content/data';
+import { skillGroups, experiences, educationEntries, projectEntries, publications, researchInterests, personalDetails } from './content/data';
 import { translations } from './i18n/translations';
 import { LanguageCode } from './context/LanguageContext';
-import { useAuth } from './context/AuthProvider';
-import emailjs from '@emailjs/browser';
 
-type AppState = 'signin' | 'intro' | 'profile' | 'main' | 'account' | 'notFound';
-type ProfileSection = 'dashboard' | 'skills' | 'experience' | 'education' | 'projects';
+type AppState = 'profile' | 'main' | 'notFound';
+type ProfileSection = 'dashboard' | 'skills' | 'experience' | 'education' | 'research' | 'projects';
 
-type AuthUser = SignInData;
-type AuthFlow = 'login' | 'signup' | null;
+interface AuthUser {
+  firstName: string;
+  lastName: string;
+  provider: 'guest';
+}
 
 interface SearchIndexItem {
   id: string;
-  type: 'skills' | 'experience' | 'education' | 'projects';
+  type: 'skills' | 'experience' | 'education' | 'research' | 'projects';
   targetId: string;
   label: Record<LanguageCode, string>;
   keywords: string[];
@@ -42,16 +41,9 @@ interface HeaderSearchResult {
   category: string;
 }
 
-const STORAGE_KEY = 'netflixPortfolioUser';
-const PROFILE_KEY = 'netflixPortfolioProfile';
-const RECRUITER_SECTION_KEY = 'netflixPortfolioRecruiterSection';
-const REMEMBERED_USER_KEY = 'netflixPortfolioRememberedUser';
-const KNOWN_AUTH_USERS_KEY = 'netflixKnownAuthUsers';
-const AUTH_FLOW_KEY = 'netflixAuthFlow';
-
-const EMAILJS_SERVICE_ID = process.env.REACT_APP_EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
-const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
+const STORAGE_KEY = 'portfolioUser';
+const PROFILE_KEY = 'portfolioProfile';
+const RECRUITER_SECTION_KEY = 'portfolioRecruiterSection';
 
 const readStoredUser = (): AuthUser | null => {
   if (typeof window === 'undefined') {
@@ -91,7 +83,7 @@ const readStoredRecruiterSection = (): ProfileSection => {
   }
 
   const stored = window.localStorage.getItem(RECRUITER_SECTION_KEY);
-  if (stored === 'skills' || stored === 'experience' || stored === 'education' || stored === 'projects') {
+  if (stored === 'skills' || stored === 'experience' || stored === 'education' || stored === 'research' || stored === 'projects') {
     return stored;
   }
   if (stored === 'certifications') {
@@ -100,245 +92,31 @@ const readStoredRecruiterSection = (): ProfileSection => {
   return 'dashboard';
 };
 
-const readRememberedUser = (): AuthUser | null => {
-  if (typeof window === 'undefined') {
-    return null;
-  }
-  const raw = window.localStorage.getItem(REMEMBERED_USER_KEY);
-  if (!raw) {
-    return null;
-  }
-  try {
-    return JSON.parse(raw) as AuthUser;
-  } catch (error) {
-    window.localStorage.removeItem(REMEMBERED_USER_KEY);
-    return null;
-  }
-};
-
-const readKnownAuthUsers = (): string[] => {
-  if (typeof window === 'undefined') {
-    return [];
-  }
-  const raw = window.localStorage.getItem(KNOWN_AUTH_USERS_KEY);
-  if (!raw) {
-    return [];
-  }
-  try {
-    return JSON.parse(raw) as string[];
-  } catch (error) {
-    window.localStorage.removeItem(KNOWN_AUTH_USERS_KEY);
-    return [];
-  }
-};
-
-const readStoredAuthFlow = (): AuthFlow => {
-  if (typeof window === 'undefined') {
-    return null;
-  }
-  const raw = window.localStorage.getItem(AUTH_FLOW_KEY) as AuthFlow | null;
-  return raw === 'login' || raw === 'signup' ? raw : null;
+const publicUser: AuthUser = {
+  firstName: 'Portfolio',
+  lastName: 'Visitor',
+  provider: 'guest',
 };
 
 function App() {
   const { language, t } = useLanguage();
-  const {
-    isConfigured: authConfigured,
-    isLoading: authLoading,
-    isAuthenticated,
-    user: auth0User,
-    loginWithRedirect,
-    logout,
-  } = useAuth();
-  const [guestUser, setGuestUser] = useState<AuthUser | null>(() => readStoredUser());
-  const [rememberedUser, setRememberedUser] = useState<AuthUser | null>(() => readRememberedUser());
-  const [profile, setProfile] = useState<string>(() => readStoredProfile()); // recruiter, stalker
+  const [guestUser] = useState<AuthUser>(() => readStoredUser() ?? publicUser);
+  const [profile, setProfile] = useState<string>(() => readStoredProfile()); // recruiter, visitor
   const [recruiterSection, setRecruiterSection] = useState<ProfileSection>(() =>
     readStoredRecruiterSection(),
   );
-  const [stalkerSection, setStalkerSection] = useState<ProfileSection>('dashboard');
+  const [visitorSection, setVisitorSection] = useState<ProfileSection>('dashboard');
   const [appState, setAppState] = useState<AppState>(() => {
-    if (typeof window === 'undefined') {
-      return 'signin';
-    }
-    const hasStoredUser = !!window.localStorage.getItem(STORAGE_KEY);
-    if (!hasStoredUser) {
-      return 'signin';
-    }
-    const storedProfile = window.localStorage.getItem(PROFILE_KEY);
-    return storedProfile ? 'main' : 'intro';
+    const storedProfile = readStoredProfile();
+    return storedProfile ? 'main' : 'profile';
   });
   const [skillsFocusId, setSkillsFocusId] = useState<string | undefined>();
   const [experienceFocusId, setExperienceFocusId] = useState<string | undefined>();
   const [educationFocusId, setEducationFocusId] = useState<string | undefined>();
   const [projectsFocusId, setProjectsFocusId] = useState<string | undefined>();
+  const [researchFocusId, setResearchFocusId] = useState<string | undefined>();
   const [notFoundQuery, setNotFoundQuery] = useState('');
-  const [knownAuthUsers, setKnownAuthUsers] = useState<string[]>(() => readKnownAuthUsers());
-  const [authFlow, setAuthFlow] = useState<AuthFlow>(() => readStoredAuthFlow());
-  const [accountError, setAccountError] = useState<string | null>(null);
-
-  const updateAuthFlow = useCallback(
-    (flow: AuthFlow) => {
-      setAuthFlow(flow);
-      if (typeof window === 'undefined') {
-        return;
-      }
-      if (flow) {
-        window.localStorage.setItem(AUTH_FLOW_KEY, flow);
-      } else {
-        window.localStorage.removeItem(AUTH_FLOW_KEY);
-      }
-    },
-    [],
-  );
-
-  const addKnownAuthUser = useCallback((authId: string | undefined | null) => {
-    if (!authId) {
-      return;
-    }
-    setKnownAuthUsers((prev) => {
-      if (prev.includes(authId)) {
-        return prev;
-      }
-      const updated = [...prev, authId];
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(KNOWN_AUTH_USERS_KEY, JSON.stringify(updated));
-      }
-      return updated;
-    });
-  }, []);
-
-  const authMappedUser = useMemo<AuthUser | null>(() => {
-    if (!isAuthenticated || !auth0User) {
-      return null;
-    }
-    const providerId = auth0User.sub?.split('|')[0];
-    let provider: AuthProvider = 'guest';
-    if (providerId === 'google-oauth2') {
-      provider = 'google';
-    } else if (providerId === 'linkedin') {
-      provider = 'linkedin';
-    } else if (providerId === 'facebook') {
-      provider = 'facebook';
-    }
-    const fullName = auth0User.name || '';
-    const nameParts = fullName.trim().split(' ');
-    const firstName = auth0User.given_name || nameParts[0] || 'User';
-    const lastName = auth0User.family_name || nameParts.slice(1).join(' ') || '';
-    return {
-      firstName,
-      lastName,
-      provider,
-      authId: auth0User.sub,
-      email: auth0User.email ?? undefined,
-    };
-  }, [auth0User, isAuthenticated]);
-
-  const user = authMappedUser ?? guestUser;
-
-  const sendWelcomeEmail = useCallback((userData: AuthUser) => {
-    if (userData.provider !== 'google') {
-      return;
-    }
-    if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
-      console.warn('EmailJS environment variables are not configured.');
-      return;
-    }
-    if (!userData.email) {
-      console.warn('No email address found for welcome message.');
-      return;
-    }
-    emailjs
-      .send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          to_email: userData.email,
-          to_name: `${userData.firstName} ${userData.lastName}`,
-        },
-        {
-          publicKey: EMAILJS_PUBLIC_KEY,
-        },
-      )
-      .catch((error) => {
-        console.error('Failed to send welcome email', error);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    if (guestUser) {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(guestUser));
-      window.localStorage.setItem(REMEMBERED_USER_KEY, JSON.stringify(guestUser));
-      setRememberedUser(guestUser);
-    } else {
-      window.localStorage.removeItem(STORAGE_KEY);
-    }
-  }, [guestUser]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    if (authMappedUser) {
-      window.localStorage.setItem(REMEMBERED_USER_KEY, JSON.stringify(authMappedUser));
-      setRememberedUser(authMappedUser);
-    }
-  }, [authMappedUser]);
-
-  useEffect(() => {
-    if (!authMappedUser) {
-      if (!guestUser && !authLoading) {
-        setAppState('signin');
-      }
-      return;
-    }
-    const authId = auth0User?.sub;
-    const currentFlow = authFlow ?? readStoredAuthFlow();
-    const isKnown = authId ? knownAuthUsers.includes(authId) : false;
-
-    if (currentFlow === 'login' && authId && !isKnown) {
-      setAccountError(t('signin.accountNotFound'));
-      updateAuthFlow(null);
-      logout({
-        logoutParams: {
-          returnTo: window.location.origin,
-        },
-      });
-      setGuestUser(null);
-      setRememberedUser(null);
-      if (typeof window !== 'undefined') {
-        window.localStorage.removeItem(STORAGE_KEY);
-        window.localStorage.removeItem(REMEMBERED_USER_KEY);
-      }
-      setAppState('signin');
-      return;
-    }
-
-    if (authId && !isKnown) {
-      addKnownAuthUser(authId);
-      sendWelcomeEmail(authMappedUser);
-    }
-    setAccountError(null);
-    setAppState(profile ? 'main' : 'intro');
-    updateAuthFlow(null);
-  }, [
-    authMappedUser,
-    auth0User,
-    authFlow,
-    knownAuthUsers,
-    addKnownAuthUser,
-    sendWelcomeEmail,
-    logout,
-    guestUser,
-    authLoading,
-    profile,
-    updateAuthFlow,
-    t,
-  ]);
+  const user = guestUser;
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -369,6 +147,7 @@ function App() {
     setExperienceFocusId(undefined);
     setEducationFocusId(undefined);
     setProjectsFocusId(undefined);
+    setResearchFocusId(undefined);
   }, []);
 
   const navigateToRecruiterSection = useCallback(
@@ -382,6 +161,8 @@ function App() {
         setEducationFocusId(focusId);
       } else if (section === 'projects') {
         setProjectsFocusId(focusId);
+      } else if (section === 'research') {
+        setResearchFocusId(focusId);
       }
       setProfile('recruiter');
       setAppState('main');
@@ -390,7 +171,7 @@ function App() {
     [clearFocusStates],
   );
 
-  const navigateToStalkerSection = useCallback(
+  const navigateToVisitorSection = useCallback(
     (section: ProfileSection, focusId?: string) => {
       clearFocusStates();
       if (section === 'skills') {
@@ -401,10 +182,12 @@ function App() {
         setEducationFocusId(focusId);
       } else if (section === 'projects') {
         setProjectsFocusId(focusId);
+      } else if (section === 'research') {
+        setResearchFocusId(focusId);
       }
-      setProfile('stalker');
+      setProfile('visitor');
       setAppState('main');
-      setStalkerSection(section);
+      setVisitorSection(section);
     },
     [clearFocusStates],
   );
@@ -476,10 +259,11 @@ function App() {
       const pushContent = (content: typeof entry.content.en) => {
         addKeyword(keywords, content.degree);
         addKeyword(keywords, content.institution);
-        addKeyword(keywords, content.major);
         addKeyword(keywords, content.thesisTitle);
-        addKeyword(keywords, content.thesisDescription);
-        content.courses.forEach((course) => addKeyword(keywords, course));
+        addKeyword(keywords, content.location);
+        addKeyword(keywords, content.duration);
+        addKeyword(keywords, content.supervisors);
+        content.bullets.forEach((bullet) => addKeyword(keywords, bullet));
       };
       pushContent(entry.content.en);
       pushContent(entry.content.de);
@@ -500,7 +284,8 @@ function App() {
       const keywords = new Set<string>();
       const pushContent = (content: typeof entry.content.en) => {
         addKeyword(keywords, content.title);
-        addKeyword(keywords, content.summary);
+        addKeyword(keywords, content.context);
+        content.bullets.forEach((bullet) => addKeyword(keywords, bullet));
         content.tech.forEach((tech) => addKeyword(keywords, tech));
       };
       pushContent(entry.content.en);
@@ -512,6 +297,23 @@ function App() {
         label,
         keywords: Array.from(keywords),
       });
+    });
+
+    publications.forEach((entry) => {
+      const label: Record<LanguageCode, string> = {
+        en: `${translations.en['recruiter.section.research']} – ${entry.content.en.title}`,
+        de: `${translations.de['recruiter.section.research']} – ${entry.content.de.title}`,
+      };
+      const keywords = new Set<string>();
+      [entry.content.en, entry.content.de].forEach((content) => {
+        addKeyword(keywords, content.citation);
+        addKeyword(keywords, content.title);
+        addKeyword(keywords, content.venue);
+        addKeyword(keywords, content.status);
+      });
+      researchInterests.en.forEach((interest) => addKeyword(keywords, interest));
+      researchInterests.de.forEach((interest) => addKeyword(keywords, interest));
+      items.push({ id: `research-${entry.id}`, type: 'research', targetId: entry.id, label, keywords: Array.from(keywords) });
     });
 
     return items;
@@ -556,6 +358,9 @@ function App() {
         case 'projects':
           navigateToRecruiterSection('projects', item.targetId);
           break;
+        case 'research':
+          navigateToRecruiterSection('research', item.targetId);
+          break;
         default:
           break;
       }
@@ -580,105 +385,20 @@ function App() {
     clearFocusStates();
     if (profile === 'recruiter') {
       setRecruiterSection('dashboard');
-    } else if (profile === 'stalker') {
-      setStalkerSection('dashboard');
+    } else if (profile === 'visitor') {
+      setVisitorSection('dashboard');
     }
     setAppState('main');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [profile, clearFocusStates]);
 
   const handleOpenLinkedIn = useCallback(() => {
-    window.open('https://www.linkedin.com/in/debanjan-chakraborty-dc/', '_blank');
+    window.open(personalDetails.linkedinUrl, '_blank');
   }, []);
 
   const handleOpenCV = useCallback(() => {
     window.open('/Debanjan-Chakraborty-CV.pdf', '_blank');
   }, []);
-
-  const handleAccountBack = useCallback(() => {
-    setAppState('main');
-  }, []);
-
-  const handleProviderSignIn = useCallback(
-    async (provider: Exclude<AuthProvider, 'guest'>) => {
-      if (!authConfigured) {
-        window.alert('Social sign-in is not configured. Please contact the administrator.');
-        return;
-      }
-      let connection = 'google-oauth2';
-      if (provider === 'linkedin') {
-        connection = 'linkedin';
-      } else if (provider === 'facebook') {
-        connection = 'facebook';
-      }
-      await loginWithRedirect({
-        authorizationParams: {
-          connection,
-        },
-      });
-    },
-    [authConfigured, loginWithRedirect],
-  );
-
-  const startSignupWithProvider = useCallback(
-    (provider: Exclude<AuthProvider, 'guest'>) => {
-      updateAuthFlow('signup');
-      handleProviderSignIn(provider);
-    },
-    [handleProviderSignIn, updateAuthFlow],
-  );
-
-  const startLoginWithProvider = useCallback(
-    (provider: Exclude<AuthProvider, 'guest'>) => {
-      updateAuthFlow('login');
-      handleProviderSignIn(provider);
-    },
-    [handleProviderSignIn, updateAuthFlow],
-  );
-
-  const handleLinkProvider = useCallback(
-    (provider: AuthProvider) => {
-      if (provider === 'guest') {
-        return;
-      }
-      startLoginWithProvider(provider);
-    },
-    [startLoginWithProvider],
-  );
-
-  const handleQuickLogin = () => {
-    if (!rememberedUser) {
-      return;
-    }
-    if (rememberedUser.provider === 'guest') {
-      setGuestUser(rememberedUser);
-      setAppState(profile ? 'main' : 'intro');
-    } else {
-      startLoginWithProvider(rememberedUser.provider);
-    }
-  };
-
-  const handleDismissAccountError = useCallback(() => {
-    setAccountError(null);
-  }, []);
-
-  const handleAnonymousVisit = () => {
-    const anonymousUser: AuthUser = {
-      firstName: 'Anonymous',
-      lastName: 'Visitor',
-      provider: 'guest',
-    };
-    setGuestUser(anonymousUser);
-    setProfile('');
-    setAppState('profile');
-    setRecruiterSection('dashboard');
-    clearFocusStates();
-    setNotFoundQuery('');
-  };
-
-  const handleIntroComplete = () => {
-    setAppState('profile');
-  };
 
   const activateProfile = (selectedProfile: string) => {
     clearFocusStates();
@@ -686,13 +406,13 @@ function App() {
     setAppState('main');
     if (selectedProfile === 'recruiter') {
       setRecruiterSection(readStoredRecruiterSection());
-      setStalkerSection('dashboard');
-    } else if (selectedProfile === 'stalker') {
-      setStalkerSection('dashboard');
+      setVisitorSection('dashboard');
+    } else if (selectedProfile === 'visitor') {
+      setVisitorSection('dashboard');
       setRecruiterSection('dashboard');
     } else {
       setRecruiterSection('dashboard');
-      setStalkerSection('dashboard');
+      setVisitorSection('dashboard');
     }
   };
 
@@ -708,27 +428,18 @@ function App() {
     setProfile('');
     setAppState('profile');
     setRecruiterSection('dashboard');
-    setStalkerSection('dashboard');
+    setVisitorSection('dashboard');
     clearFocusStates();
     setNotFoundQuery('');
   };
 
   const handleSignOut = () => {
     setProfile('');
-    setGuestUser(null);
     setRecruiterSection('dashboard');
-    setStalkerSection('dashboard');
+    setVisitorSection('dashboard');
     clearFocusStates();
     setNotFoundQuery('');
-    if (authMappedUser && authConfigured) {
-      logout({
-        logoutParams: {
-          returnTo: window.location.origin,
-        },
-      });
-    } else {
-      setAppState('signin');
-    }
+    setAppState('profile');
   };
 
   const handleRecruiterSectionSelect = (sectionId: string) => {
@@ -746,8 +457,11 @@ function App() {
       case 'projects':
         navigateToRecruiterSection('projects');
         break;
+      case 'research':
+        navigateToRecruiterSection('research');
+        break;
       case 'contact':
-        window.open('mailto:debanjanofficial@gmail.com');
+        window.location.href = personalDetails.emailUrl;
         break;
       default:
         setRecruiterSection('dashboard');
@@ -755,26 +469,29 @@ function App() {
     }
   };
 
-  const handleStalkerSectionSelect = (sectionId: string) => {
+  const handleVisitorSectionSelect = (sectionId: string) => {
     switch (sectionId) {
       case 'skills':
-        navigateToStalkerSection('skills');
+        navigateToVisitorSection('skills');
         break;
       case 'experience':
-        navigateToStalkerSection('experience');
+        navigateToVisitorSection('experience');
         break;
       case 'education':
       case 'certifications':
-        navigateToStalkerSection('education');
+        navigateToVisitorSection('education');
         break;
       case 'projects':
-        navigateToStalkerSection('projects');
+        navigateToVisitorSection('projects');
+        break;
+      case 'research':
+        navigateToVisitorSection('research');
         break;
       case 'contact':
-        window.open('mailto:debanjanofficial@gmail.com');
+        window.location.href = personalDetails.emailUrl;
         break;
       default:
-        setStalkerSection('dashboard');
+        setVisitorSection('dashboard');
         clearFocusStates();
     }
   };
@@ -784,9 +501,9 @@ function App() {
     setRecruiterSection('dashboard');
   };
 
-  const handleStalkerSectionBack = () => {
+  const handleVisitorSectionBack = () => {
     clearFocusStates();
-    setStalkerSection('dashboard');
+    setVisitorSection('dashboard');
   };
 
   const projects = {
@@ -828,44 +545,15 @@ function App() {
     ],
   };
 
-  if (appState === 'signin' || !user) {
-    return (
-      <SignIn
-        onAnonymousVisit={handleAnonymousVisit}
-        onProviderSignIn={startSignupWithProvider}
-        onExistingProviderSignIn={startLoginWithProvider}
-        providerLoading={authLoading}
-        providersEnabled={authConfigured}
-        rememberedUser={rememberedUser}
-        onQuickLogin={rememberedUser ? handleQuickLogin : undefined}
-        accountError={accountError}
-        onDismissAccountError={accountError ? handleDismissAccountError : undefined}
-      />
-    );
-  }
-
-  if (appState === 'intro') {
-    return <Intro onIntroComplete={handleIntroComplete} />;
-  }
-
   if (appState === 'profile') {
-    return (
-      <Profile
-        onProfileSelect={handleProfileSelect}
-        viewerName={user.firstName}
-      />
-    );
+    return <Profile onProfileSelect={handleProfileSelect} viewerName={user.firstName} />;
   }
-
-  const handleOpenAccount = () => {
-    setAppState('account');
-  };
 
   const headerShouldRender = !(
     appState === 'main' &&
     (
-      (profile === 'recruiter' && ['skills', 'experience', 'education', 'projects'].includes(recruiterSection)) ||
-      (profile === 'stalker' && ['skills', 'experience', 'education', 'projects'].includes(stalkerSection))
+      (profile === 'recruiter' && ['skills', 'experience', 'education', 'research', 'projects'].includes(recruiterSection)) ||
+      (profile === 'visitor' && ['skills', 'experience', 'education', 'research', 'projects'].includes(visitorSection))
     )
   );
 
@@ -875,31 +563,17 @@ function App() {
       onSelectProfile={handleHeaderProfileSelect}
       onExitToProfiles={handleExitToProfiles}
       onSignOut={handleSignOut}
-      onAccount={handleOpenAccount}
+      onAccount={handleExitToProfiles}
       onHome={handleHomeNavigation}
       onOpenLinkedIn={handleOpenLinkedIn}
       onOpenCV={handleOpenCV}
       onSearch={handleSearch}
       onSelectSearchResult={handleSelectSearchResult}
       onSearchNoResults={handleSearchNoResults}
-      showLoginButton={user?.provider === 'guest'}
-      onLogin={handleOpenAccount}
+      showLoginButton={false}
+      onLogin={handleExitToProfiles}
     />
   );
-
-  if (appState === 'account') {
-    return (
-      <div className="App">
-        {headerElement}
-        <AccountPage
-          user={user}
-          onBack={handleAccountBack}
-          onSignOut={handleSignOut}
-          onLinkProvider={handleLinkProvider}
-        />
-      </div>
-    );
-  }
 
   if (appState === 'notFound') {
     return (
@@ -922,25 +596,29 @@ function App() {
           <EducationShowcase onBack={handleSkillsBack} initialEducationId={educationFocusId} />
         ) : recruiterSection === 'projects' ? (
           <ProjectsShowcase onBack={handleSkillsBack} initialProjectId={projectsFocusId} />
+        ) : recruiterSection === 'research' ? (
+          <ResearchShowcase onBack={handleSkillsBack} initialPublicationId={researchFocusId} />
         ) : (
           <>
             <Banner profile={profile} />
             <RecruiterDashboard onSelectSection={handleRecruiterSectionSelect} />
           </>
         )
-      ) : profile === 'stalker' ? (
-        stalkerSection === 'skills' ? (
-          <SkillsShowcase onBack={handleStalkerSectionBack} initialGroupId={skillsFocusId} />
-        ) : stalkerSection === 'experience' ? (
-          <ExperienceShowcase onBack={handleStalkerSectionBack} initialExperienceId={experienceFocusId} />
-        ) : stalkerSection === 'education' ? (
-          <EducationShowcase onBack={handleStalkerSectionBack} initialEducationId={educationFocusId} />
-        ) : stalkerSection === 'projects' ? (
-          <ProjectsShowcase onBack={handleStalkerSectionBack} initialProjectId={projectsFocusId} />
+      ) : profile === 'visitor' ? (
+        visitorSection === 'skills' ? (
+          <SkillsShowcase onBack={handleVisitorSectionBack} initialGroupId={skillsFocusId} />
+        ) : visitorSection === 'experience' ? (
+          <ExperienceShowcase onBack={handleVisitorSectionBack} initialExperienceId={experienceFocusId} />
+        ) : visitorSection === 'education' ? (
+          <EducationShowcase onBack={handleVisitorSectionBack} initialEducationId={educationFocusId} />
+        ) : visitorSection === 'projects' ? (
+          <ProjectsShowcase onBack={handleVisitorSectionBack} initialProjectId={projectsFocusId} />
+        ) : visitorSection === 'research' ? (
+          <ResearchShowcase onBack={handleVisitorSectionBack} initialPublicationId={researchFocusId} />
         ) : (
           <>
             <Banner profile={profile} />
-            <StalkerDashboard onSelectSection={handleStalkerSectionSelect} />
+            <VisitorDashboard onSelectSection={handleVisitorSectionSelect} />
           </>
         )
       ) : (

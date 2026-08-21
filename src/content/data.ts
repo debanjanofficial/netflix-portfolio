@@ -1,10 +1,5 @@
 import { LanguageCode } from '../context/LanguageContext';
 
-export interface LocalisedValue<T> {
-  id: string;
-  label: Record<LanguageCode, T>;
-}
-
 export interface SkillGroup {
   id: string;
   label: Record<LanguageCode, string>;
@@ -14,101 +9,87 @@ export interface SkillGroup {
 export interface ExperienceEntry {
   id: string;
   content: Record<LanguageCode, {
-    role: string;
-    company: string;
-    duration: string;
-    bullets: string[];
+    role: string; company: string; location: string; duration: string; bullets: string[];
   }>;
 }
 
 export interface EducationEntry {
   id: string;
   content: Record<LanguageCode, {
-    degree: string;
-    institution: string;
-    institutionUrl: string;
-    major: string;
-    courses: string[];
-    thesisTitle: string;
-    thesisDescription: string;
+    degree: string; institution: string; institutionUrl: string; location: string;
+    duration: string; thesisTitle: string; supervisors: string; bullets: string[];
   }>;
 }
 
 export interface ProjectEntry {
   id: string;
   content: Record<LanguageCode, {
-    title: string;
-    url: string;
-    summary: string;
-    tech: string[];
+    title: string; url?: string; context: string; tech: string[]; bullets: string[];
   }>;
 }
 
+export interface PublicationEntry {
+  id: string;
+  content: Record<LanguageCode, {
+    citation: string; title: string; venue: string; status: string;
+  }>;
+}
+
+export const personalDetails = {
+  name: 'Debanjan Chakraborty',
+  location: 'Weisendorf, Bavaria, Germany',
+  phone: '+49 15292606217',
+  phoneUrl: 'tel:+4915292606217',
+  email: 'dbjn.ckbrty99@gmail.com',
+  emailUrl: 'mailto:dbjn.ckbrty99@gmail.com',
+  linkedinUrl: 'https://linkedin.com/in/debanjan-chakraborty',
+  githubUrl: 'https://github.com/debanjanofficial',
+};
+
+export const researchInterests: Record<LanguageCode, string[]> = {
+  en: ['Machine Learning', 'Explainable AI', 'Unsupervised Anomaly Detection', 'Retrieval-Augmented Generation (RAG)', 'Applied Computer Vision', 'Edge Inference'],
+  de: ['Machine Learning', 'Erklärbare KI', 'Unüberwachte Anomalieerkennung', 'Retrieval-Augmented Generation (RAG)', 'Angewandte Computer Vision', 'Edge-Inferenz'],
+};
+
 export const skillGroups: SkillGroup[] = [
   {
-    id: 'programming',
-    label: {
-      en: 'Programming',
-      de: 'Programmierung',
-    },
+    id: 'deep-learning-ai',
+    label: { en: 'Deep Learning & AI', de: 'Deep Learning & KI' },
     items: {
-      en: ['Python', 'SQL', 'Alteryx'],
-      de: ['Python', 'SQL', 'Alteryx'],
+      en: ['PyTorch', 'Transformers', 'LLMs (Ollama)', 'RAG', 'OpenCV', 'Scikit-Learn'],
+      de: ['PyTorch', 'Transformers', 'LLMs (Ollama)', 'RAG', 'OpenCV', 'Scikit-Learn'],
     },
   },
   {
-    id: 'power-platform',
-    label: {
-      en: 'Microsoft Power Platform',
-      de: 'Microsoft Power Platform',
-    },
+    id: 'languages-backend',
+    label: { en: 'Languages & Backend', de: 'Sprachen & Backend' },
     items: {
-      en: ['Power BI', 'Power Automate', 'Power Apps'],
-      de: ['Power BI', 'Power Automate', 'Power Apps'],
+      en: ['Python', 'SQL', 'TypeScript', 'JavaScript', 'FastAPI', 'Django', 'Vue 3'],
+      de: ['Python', 'SQL', 'TypeScript', 'JavaScript', 'FastAPI', 'Django', 'Vue 3'],
     },
   },
   {
-    id: 'ml-dl',
-    label: {
-      en: 'Machine Learning & Deep Learning',
-      de: 'Machine Learning & Deep Learning',
-    },
+    id: 'infrastructure-cloud',
+    label: { en: 'Infrastructure & Cloud', de: 'Infrastruktur & Cloud' },
     items: {
-      en: ['Scikit-Learn', 'PyTorch', 'OpenCV', 'LLMs', 'Transformers', 'NumPy', 'Pandas'],
-      de: ['Scikit-Learn', 'PyTorch', 'OpenCV', 'LLMs', 'Transformer', 'NumPy', 'Pandas'],
+      en: ['Docker', 'Git', 'CI/CD', 'GitHub Actions', 'Azure', 'Snowflake', 'SQLite'],
+      de: ['Docker', 'Git', 'CI/CD', 'GitHub Actions', 'Azure', 'Snowflake', 'SQLite'],
     },
   },
   {
-    id: 'office-365',
-    label: {
-      en: 'Office 365',
-      de: 'Office 365',
-    },
+    id: 'visualization-tools',
+    label: { en: 'Data Visualization & Tools', de: 'Datenvisualisierung & Tools' },
     items: {
-      en: ['Excel', 'SharePoint', 'PowerPoint', 'Azure ML'],
-      de: ['Excel', 'SharePoint', 'PowerPoint', 'Azure ML'],
+      en: ['Tableau', 'Power BI', 'Alteryx', 'Jupyter', 'LaTeX', 'Matplotlib', 'Seaborn'],
+      de: ['Tableau', 'Power BI', 'Alteryx', 'Jupyter', 'LaTeX', 'Matplotlib', 'Seaborn'],
     },
   },
   {
-    id: 'devops',
-    label: {
-      en: 'GitHub & Docker',
-      de: 'GitHub & Docker',
-    },
+    id: 'spoken-languages',
+    label: { en: 'Spoken Languages', de: 'Gesprochene Sprachen' },
     items: {
-      en: ['GitHub', 'Docker'],
-      de: ['GitHub', 'Docker'],
-    },
-  },
-  {
-    id: 'visualization',
-    label: {
-      en: 'Visualization',
-      de: 'Visualisierung',
-    },
-    items: {
-      en: ['Matplotlib', 'Seaborn', 'Tableau'],
-      de: ['Matplotlib', 'Seaborn', 'Tableau'],
+      en: ['English — C1 / Fluent', 'German — B1/B2 / Intermediate', 'Bengali — Native', 'Norwegian — Basic'],
+      de: ['Englisch — C1 / fließend', 'Deutsch — B1/B2 / Mittelstufe', 'Bengalisch — Muttersprache', 'Norwegisch — Grundkenntnisse'],
     },
   },
 ];
@@ -118,77 +99,61 @@ export const experiences: ExperienceEntry[] = [
     id: 'data-scientist',
     content: {
       en: {
-        role: 'Data Scientist',
-        company: 'Siemens Energy',
-        duration: '10.2025 – Present',
+        role: 'Data Scientist (Working Student)', company: 'Siemens Energy', location: 'Erlangen, Germany', duration: 'Oct. 2025 – Mar. 2026',
         bullets: [
-          'Driving data-driven decision making across energy initiatives with advanced analytics and AI.',
-          'Experimenting with LLMs and predictive models to optimize operational efficiency.',
-          'Partnering with product stakeholders to align solutions with business goals.',
+          'Developed an end-to-end Python microservice to retrieve events from an external API and publish them to Azure Event Hub as part of a proof of concept.',
+          'Enabled Multi-Agent System integration with the EcoMAIN platform, collaborating with Alexander Thamm on advanced anomaly detection.',
+          'Maintained and debugged Vue.js frontend applications, optimizing backend API calls and aligning UI components with complex technical requirements.',
         ],
       },
       de: {
-        role: 'Data Scientist',
-        company: 'Siemens Energy',
-        duration: '10.2025 – Heute',
+        role: 'Data Scientist (Werkstudent)', company: 'Siemens Energy', location: 'Erlangen, Deutschland', duration: 'Okt. 2025 – März 2026',
         bullets: [
-          'Steuere datengetriebene Entscheidungen in Energieprojekten mithilfe von Advanced Analytics und KI.',
-          'Erprobe LLMs und Vorhersagemodelle, um die operative Effizienz zu optimieren.',
-          'Arbeite eng mit Produkt-Stakeholdern zusammen, um Lösungen auf Geschäftsziele auszurichten.',
+          'Entwickelte für einen Proof of Concept einen durchgängigen Python-Microservice, der Ereignisse aus einer externen API abruft und an Azure Event Hub übermittelt.',
+          'Ermöglichte die Integration eines Multi-Agenten-Systems in die EcoMAIN-Plattform und arbeitete mit Alexander Thamm an fortgeschrittener Anomalieerkennung.',
+          'Wartete und debugte Vue.js-Frontends, optimierte Backend-API-Aufrufe und stimmte UI-Komponenten auf komplexe technische Anforderungen ab.',
         ],
       },
     },
   },
   {
-    id: 'db-management',
+    id: 'data-analyst-siemens',
     content: {
       en: {
-        role: 'Database Management & Data Analysis',
-        company: 'Siemens Energy',
-        duration: '12.2024 – 09.2025',
+        role: 'Data Analyst (Working Student)', company: 'Siemens Energy', location: 'Erlangen, Germany', duration: 'Dec. 2024 – Sep. 2025',
         bullets: [
-          'Managed MS SQL databases, synchronizing SharePoint and Excel sources via Power Automate.',
-          'Leveraged Alteryx for data manipulation, analysis, and preprocessing across R&D portfolios.',
-          'Built Tableau dashboards and reports to surface processed insights for leadership.',
-          'Collaborated with users and stakeholders to refine requirements and validate solutions.',
-          'Created and maintained collaborative databases to support digital use cases.',
+          'Managed complex relational databases (MS SQL, MySQL) in the operational R&D division, writing optimized queries for extensive data migrations.',
+          'Designed and implemented automated ETL/ELT data flows, synchronizing data from SharePoint and Excel to SQL using Power Automate and Alteryx.',
+          'Architected a new collaborative backend database for portfolio and development data to support digital use cases.',
         ],
       },
       de: {
-        role: 'Datenbankverwaltung & Datenanalyse',
-        company: 'Siemens Energy',
-        duration: '12.2024 – 09.2025',
+        role: 'Data Analyst (Werkstudent)', company: 'Siemens Energy', location: 'Erlangen, Deutschland', duration: 'Dez. 2024 – Sep. 2025',
         bullets: [
-          'Verwaltete MS SQL-Datenbanken und synchronisierte SharePoint- sowie Excel-Datenquellen über Power Automate.',
-          'Setzte Alteryx für Datenaufbereitung, Analyse und Vorverarbeitung in F&E-Portfolios ein.',
-          'Erstellte Tableau-Dashboards und Reports, um Erkenntnisse für das Management sichtbar zu machen.',
-          'Stimmte Anforderungen mit Anwendern und Stakeholdern ab und validierte Lösungen.',
-          'Entwickelte und pflegte kollaborative Datenbanken zur Unterstützung digitaler Use Cases.',
+          'Verwaltete komplexe relationale Datenbanken (MS SQL, MySQL) im operativen F&E-Bereich und schrieb optimierte Abfragen für umfangreiche Datenmigrationen.',
+          'Konzipierte und implementierte automatisierte ETL/ELT-Datenflüsse zur Synchronisierung von SharePoint- und Excel-Daten nach SQL mit Power Automate und Alteryx.',
+          'Entwarf eine neue kollaborative Backend-Datenbank für Portfolio- und Entwicklungsdaten zur Unterstützung digitaler Use Cases.',
         ],
       },
     },
   },
   {
-    id: 'intern-analyst',
+    id: 'data-analyst-it-grow',
     content: {
       en: {
-        role: 'Data Analyst',
-        company: 'IT Grow Division Limited',
-        duration: '10.2021 – 03.2023',
+        role: 'Data Analyst', company: 'IT Grow Division Limited', location: 'Remote', duration: 'Oct. 2021 – Mar. 2023',
         bullets: [
-          'Integrated MySQL and Excel data into Power BI with Power Query transformations.',
-          'Delivered finance, sales, marketing, supply chain, and executive dashboards to improve gross margin.',
-          'Adopted project chartering, stakeholder mapping, and Kanban practices to streamline delivery.',
+          'Executed complex ETL processes by connecting Snowflake, MySQL, and Excel to extract and transform large-scale datasets using Power Query.',
+          'Built interactive analytical dashboards to provide actionable, data-driven insights to executive stakeholders.',
+          'Used agile methodologies (Kanban, Scrum) to map stakeholder requirements and streamline project delivery.',
         ],
       },
       de: {
-        role: 'Datenanalyst',
-        company: 'IT Grow Division Limited',
-        duration: '10.2021 – 03.2023',
+        role: 'Data Analyst', company: 'IT Grow Division Limited', location: 'Remote', duration: 'Okt. 2021 – März 2023',
         bullets: [
-          'Integrierte MySQL- und Excel-Daten in Power BI und führte Transformationen mit Power Query durch.',
-          'Lieferte Dashboards für Finanzen, Vertrieb, Marketing, Supply Chain und Management zur Verbesserung der Marge.',
-          'Setzte Projektcharta, Stakeholder-Mapping und Kanban zur effizienten Umsetzung ein.',
+          'Führte komplexe ETL-Prozesse durch und verband Snowflake, MySQL und Excel, um große Datensätze mit Power Query zu extrahieren und zu transformieren.',
+          'Erstellte interaktive Analyse-Dashboards mit umsetzbaren, datenbasierten Erkenntnissen für Führungskräfte.',
+          'Nutzte agile Methoden (Kanban, Scrum), um Stakeholder-Anforderungen abzubilden und die Projektabwicklung zu optimieren.',
         ],
       },
     },
@@ -200,36 +165,22 @@ export const educationEntries: EducationEntry[] = [
     id: 'masters',
     content: {
       en: {
-        degree: 'Masters in Data Science',
-        institution: 'Friedrich Alexander University',
-        institutionUrl: 'https://www.fau.de',
-        major: 'Machine Learning / Artificial Intelligence',
-        courses: [
-          'Pattern Recognition',
-          'Deep Learning',
-          'ML in Signal Processing',
-          'ML in Time Series',
-          'ML in Finance',
+        degree: 'Master of Science in Data Science', institution: 'Friedrich-Alexander-Universität Erlangen-Nürnberg', institutionUrl: 'https://www.fau.eu', location: 'Erlangen, Germany', duration: 'Oct. 2022 – Jun. 2026',
+        thesisTitle: 'Anomaly detection Agent for timeseries data (Process Industry) that can be integrated in an Multi Agent System',
+        supervisors: 'Prof. Dr. Marie Düker · Prof. Dr. Frauke Liers',
+        bullets: [
+          'Architected an unsupervised machine learning pipeline to detect anomalies in complex, multivariate time series data for the process industry.',
+          'Designed the system as an independent, scalable agent for seamless integration into a larger industrial Multi-Agent System ecosystem, completed in collaboration with Siemens Energy.',
         ],
-        thesisTitle: "Master's Thesis",
-        thesisDescription:
-          'Designed an anomaly detection agent for process-industry time series that integrates with a multi-agent system using deep learning, ML, and statistical models with JSON-based logging and Matplotlib visualization (Siemens Energy).',
       },
       de: {
-        degree: 'Master in Data Science',
-        institution: 'Friedrich-Alexander-Universität',
-        institutionUrl: 'https://www.fau.de',
-        major: 'Machine Learning / Künstliche Intelligenz',
-        courses: [
-          'Pattern Recognition',
-          'Deep Learning',
-          'ML in Signalverarbeitung',
-          'ML in Zeitreihen',
-          'ML in Finanzen',
+        degree: 'Master of Science in Data Science', institution: 'Friedrich-Alexander-Universität Erlangen-Nürnberg', institutionUrl: 'https://www.fau.de', location: 'Erlangen, Deutschland', duration: 'Okt. 2022 – Juni 2026',
+        thesisTitle: 'Anomalieerkennungs-Agent für Zeitreihendaten der Prozessindustrie zur Integration in ein Multi-Agenten-System',
+        supervisors: 'Prof. Dr. Marie Düker · Prof. Dr. Frauke Liers',
+        bullets: [
+          'Konzipierte eine unüberwachte Machine-Learning-Pipeline zur Erkennung von Anomalien in komplexen, multivariaten Zeitreihendaten der Prozessindustrie.',
+          'Entwickelte das System als unabhängigen, skalierbaren Agenten zur nahtlosen Integration in ein größeres industrielles Multi-Agenten-Ökosystem, in Zusammenarbeit mit Siemens Energy.',
         ],
-        thesisTitle: 'Masterarbeit',
-        thesisDescription:
-          'Entwickelte einen Anomalieerkennungs-Agenten für Zeitreihen der Prozessindustrie, integrierbar in ein Multi-Agenten-System mit Deep Learning, ML und statistischen Modellen inkl. JSON-Logging und Matplotlib-Visualisierung (Siemens Energy).',
       },
     },
   },
@@ -237,38 +188,22 @@ export const educationEntries: EducationEntry[] = [
     id: 'bachelors',
     content: {
       en: {
-        degree: 'Bachelors in Computer Science and Engineering',
-        institution: 'Maulana Abul Kalam Azad University of Technology',
-        institutionUrl: 'https://makautwb.ac.in',
-        major: 'Grade: 1.9 (180 ECTS)',
-        courses: [
-          'DBMS',
-          'Data Structure Engineering',
-          'OOP',
-          'Artificial Intelligence',
-          'Internet Technology',
-          'Python for Machine Learning',
+        degree: 'Bachelor of Technology in Computer Science and Engineering', institution: 'Budge Budge Institute of Technology (MAKAUT)', institutionUrl: 'https://www.bbit.edu.in', location: 'Kolkata, India', duration: 'Jul. 2017 – May 2021',
+        thesisTitle: 'Design and Evaluation of a Lightweight Real-Time Facial Expression Recognition System', supervisors: 'Prof. Dr. Bimal Dutta',
+        bullets: [
+          'Engineered a custom, highly efficient Mini-Xception CNN (56,951 parameters) from scratch using PyTorch to classify seven basic emotions.',
+          'Mitigated severe class imbalance in the FERPlus dataset using an optimized square-root inverse-frequency loss weighting strategy, achieving 75.40% test accuracy.',
+          'Deployed the model for real-time edge inference using MediaPipe BlazeFace, sustaining 30 FPS with ultra-low latency (3.42 ms) on CPU hardware.',
         ],
-        thesisTitle: "Bachelor's Thesis",
-        thesisDescription:
-          'Built a real-time emotion detection system for seven basic expressions using a VGG16 deep learning model.',
       },
       de: {
-        degree: 'Bachelor in Informatik und Ingenieurwissenschaften',
-        institution: 'Maulana Abul Kalam Azad University of Technology',
-        institutionUrl: 'https://makautwb.ac.in',
-        major: 'Note: 1,9 (180 ECTS)',
-        courses: [
-          'DBMS',
-          'Datenstrukturen',
-          'OOP',
-          'Künstliche Intelligenz',
-          'Internet-Technologie',
-          'Python für Machine Learning',
+        degree: 'Bachelor of Technology in Computer Science and Engineering', institution: 'Budge Budge Institute of Technology (MAKAUT)', institutionUrl: 'https://www.bbit.edu.in', location: 'Kolkata, Indien', duration: 'Juli 2017 – Mai 2021',
+        thesisTitle: 'Entwurf und Evaluierung eines leichtgewichtigen Echtzeit-Systems zur Gesichtsausdruckserkennung', supervisors: 'Prof. Dr. Bimal Dutta',
+        bullets: [
+          'Entwickelte mit PyTorch ein eigenes, hocheffizientes Mini-Xception-CNN (56.951 Parameter) zur Klassifikation von sieben Basisemotionen.',
+          'Reduzierte die starke Klassenunwucht im FERPlus-Datensatz durch eine optimierte Gewichtung der Verlustfunktion und erreichte 75,40 % Testgenauigkeit.',
+          'Implementierte das Modell mit MediaPipe BlazeFace für Echtzeit-Edge-Inferenz und erreichte auf CPU-Hardware 30 FPS bei 3,42 ms Latenz.',
         ],
-        thesisTitle: 'Bachelorarbeit',
-        thesisDescription:
-          'Entwickelte eine Echtzeit-Gesichtsemotions-Erkennung (sieben Basisemotionen) auf Basis des VGG16-Deep-Learning-Modells.',
       },
     },
   },
@@ -276,71 +211,90 @@ export const educationEntries: EducationEntry[] = [
 
 export const projectEntries: ProjectEntry[] = [
   {
-    id: 'route-planning',
+    id: 'sensation',
     content: {
       en: {
-        title: 'Project-Route-Planning-for-the-Visually-Impaired',
-        url: 'https://github.com/debanjanofficial/Project-Route-Planning-for-the-Visually-Impaired',
-        summary:
-          'Developed an AI-powered navigation assistance system combining semantic segmentation and real-time GPS routing to guide visually impaired individuals along safe sidewalks.',
-        tech: ['Python', 'PyTorch', 'OpenCV', 'ONNX', 'GPS/GIS APIs', 'Deep Learning', 'Computer Vision', 'Semantic Segmentation'],
+        title: 'SENSATION: Navigation System for Visually Impaired', url: 'https://github.com/debanjanofficial/Project-Route-Planning-for-the-Visually-Impaired', context: 'Master Seminar', tech: ['PyTorch', 'ONNX', 'OpenCV'],
+        bullets: [
+          'Designed an assistive navigation system fusing DeepLabv3+ ResNet50 semantic segmentation with Valhalla GPS routing for real-time sidewalk guidance.',
+          'Fine-tuned the model on the Mapillary dataset and exported it to ONNX via TorchScript for efficient CPU/GPU inference on live camera streams.',
+          'Engineered a spatial analysis algorithm to issue directional commands based on dominant sidewalk pixel distribution.',
+        ],
       },
       de: {
-        title: 'Project-Route-Planning-for-the-Visually-Impaired',
-        url: 'https://github.com/debanjanofficial/Project-Route-Planning-for-the-Visually-Impaired',
-        summary:
-          'Entwickelte ein KI-gestütztes Navigationssystem, das semantische Segmentierung und GPS-Routing kombiniert, um Sehbehinderten sichere Gehwege aufzuzeigen.',
-        tech: ['Python', 'PyTorch', 'OpenCV', 'ONNX', 'GPS/GIS APIs', 'Deep Learning', 'Computer Vision', 'Semantische Segmentierung'],
+        title: 'SENSATION: Navigationssystem für Sehbehinderte', url: 'https://github.com/debanjanofficial/Project-Route-Planning-for-the-Visually-Impaired', context: 'Masterseminar', tech: ['PyTorch', 'ONNX', 'OpenCV'],
+        bullets: [
+          'Entwarf ein assistives Navigationssystem, das semantische Segmentierung mit DeepLabv3+ ResNet50 und Valhalla-GPS-Routing für eine Echtzeit-Gehwegführung kombiniert.',
+          'Optimierte das Modell auf dem Mapillary-Datensatz und exportierte es über TorchScript nach ONNX für effiziente CPU/GPU-Inferenz auf Live-Kamerastreams.',
+          'Entwickelte einen räumlichen Analysealgorithmus, der anhand der dominanten Verteilung von Gehwegpixeln Richtungsanweisungen ausgibt.',
+        ],
       },
     },
   },
   {
-    id: 'drivers-friend',
+    id: 'drivers-freund',
     content: {
       en: {
-        title: "Driver's Friend - AI-Powered Multilingual Chatbot (Ongoing)",
-        url: 'https://www.driversfreund.com',
-        summary:
-          'Created a bilingual chatbot for German driving regulations with conversation memory, intelligent scraping, and real-time chat built on React, FastAPI.',
-        tech: ['React', 'TypeScript', 'Python', 'FastAPI', 'MongoDB', 'NLP', 'spaCy', 'Multilingual Support', 'Real-time Chat'],
+        title: "Driver's Freund: AI Multilingual Chatbot", url: 'https://www.driversfreund.com', context: '2025 – Present', tech: ['FastAPI', 'LangChain', 'React', 'Docker'],
+        bullets: [
+          'Architected a full-stack German driving law chatbot using a Retrieval-Augmented Generation pipeline (MiniLM + Chroma + Perplexity).',
+          'Implemented a bilingual NLP pipeline (EN/DE) using spaCy for classification and generation, deployed on a VPS with Docker and CI/CD automation.',
+        ],
       },
       de: {
-        title: "Driver's Friend - KI-gestützter mehrsprachiger Chatbot (laufend)",
-        url: 'https://www.driversfreund.com',
-        summary:
-          'Entwickelte einen zweisprachigen Chatbot für deutsche Verkehrsregeln mit Gesprächsspeicher, intelligentem Scraping und Echtzeit-Chat auf Basis von React, FastAPI.',
-        tech: ['React', 'TypeScript', 'Python', 'FastAPI', 'MongoDB', 'NLP', 'spaCy', 'Mehrsprachige KI', 'Echtzeit-Chat'],
+        title: "Driver's Freund: Mehrsprachiger KI-Chatbot", url: 'https://www.driversfreund.com', context: '2025 – heute', tech: ['FastAPI', 'LangChain', 'React', 'Docker'],
+        bullets: [
+          'Konzipierte einen Full-Stack-Chatbot zum deutschen Verkehrsrecht mit einer Retrieval-Augmented-Generation-Pipeline (MiniLM + Chroma + Perplexity).',
+          'Implementierte mit spaCy eine zweisprachige NLP-Pipeline (EN/DE) für Klassifikation und Generierung und stellte sie per Docker und CI/CD auf einem VPS bereit.',
+        ],
       },
     },
   },
   {
-    id: 'crime-analysis',
+    id: 'chicago-crime',
     content: {
       en: {
-        title: 'Crime Data Analysis in Chicago post Covid',
-        url: 'https://github.com/debanjanofficial/made-template',
-        summary:
-          'Engineered an automated ETL pipeline correlating weather and crime patterns in Chicago with rigorous analysis, visualization, and CI/CD automation for urban insights.',
-        tech: ['Python', 'ETL Pipelines', 'Data Analysis', 'Jupyter Notebooks', 'GitHub Actions', 'SQLite', 'Data Visualization'],
+        title: 'Chicago Crime Data Analysis', url: 'https://github.com/debanjanofficial/made-template', context: '2024 – 2025', tech: ['Python', 'SQLite', 'GitHub Actions'],
+        bullets: [
+          'Built an end-to-end ETL pipeline correlating Chicago crime incidents with meteorological data from the Chicago Police Department and weather APIs.',
+          'Deployed automated testing and CI/CD pipelines via GitHub Actions to ensure full reproducibility of the data engineering lifecycle.',
+        ],
       },
       de: {
-        title: 'Crime Data Analysis in Chicago post Covid',
-        url: 'https://github.com/debanjanofficial/made-template',
-        summary:
-          'Implementierte eine automatisierte ETL-Pipeline zur Analyse von Wetter- und Kriminalitätsmustern in Chicago inklusive Visualisierung und CI/CD-Workflows für urbane Erkenntnisse.',
-        tech: ['Python', 'ETL-Pipelines', 'Datenanalyse', 'Jupyter Notebooks', 'GitHub Actions', 'SQLite', 'Datenvisualisierung'],
+        title: 'Analyse der Kriminalitätsdaten von Chicago', url: 'https://github.com/debanjanofficial/made-template', context: '2024 – 2025', tech: ['Python', 'SQLite', 'GitHub Actions'],
+        bullets: [
+          'Entwickelte eine durchgängige ETL-Pipeline, die Kriminalitätsfälle in Chicago mit Wetterdaten der Chicago Police Department und von Wetter-APIs korreliert.',
+          'Implementierte automatisierte Tests und CI/CD-Pipelines mit GitHub Actions, um die vollständige Reproduzierbarkeit des Data-Engineering-Lebenszyklus sicherzustellen.',
+        ],
       },
+    },
+  },
+];
+
+export const publications: PublicationEntry[] = [
+  {
+    id: 'dual-pipeline',
+    content: {
+      en: { citation: 'Chakraborty, D. (2026)', title: 'A Dual-Pipeline Multi-Agent Architecture for Unsupervised Anomaly Detection in Multivariate Time Series', venue: 'Pattern Recognition', status: 'Submitted · Under Review' },
+      de: { citation: 'Chakraborty, D. (2026)', title: 'A Dual-Pipeline Multi-Agent Architecture for Unsupervised Anomaly Detection in Multivariate Time Series', venue: 'Pattern Recognition', status: 'Eingereicht · In Begutachtung' },
+    },
+  },
+  {
+    id: 'facial-expression',
+    content: {
+      en: { citation: 'Chakraborty, D. (2026)', title: 'Design and Evaluation of a Lightweight Real-Time Facial Expression Recognition System: A PyTorch Mini-Xception Implementation Trained on FERPlus', venue: 'SN Computer Science', status: 'Submitted · Preprint pending on Research Square' },
+      de: { citation: 'Chakraborty, D. (2026)', title: 'Design and Evaluation of a Lightweight Real-Time Facial Expression Recognition System: A PyTorch Mini-Xception Implementation Trained on FERPlus', venue: 'SN Computer Science', status: 'Eingereicht · Preprint auf Research Square ausstehend' },
     },
   },
 ];
 
 export const bannerSummary: Record<LanguageCode, string[]> = {
   en: [
-    'Data Science MSc graduate focused on extracting actionable insights to drive strategic decision-making. Experienced with analytics, machine learning, and visualization to tackle business challenges.',
-    'Eager to apply analytical skills to support business growth and innovation in dynamic corporate environments.',
+    'Data Science M.Sc. graduate and applied AI researcher developing intelligent systems for multivariate time-series analysis, anomaly detection, retrieval-augmented generation, and computer vision.',
+    'I bridge rigorous machine learning research with production engineering—translating novel ideas into scalable, explainable solutions for real-world scientific and industrial challenges.',
   ],
   de: [
-    'Data-Science-MSc-Absolvent mit Fokus auf verwertbare Insights zur Unterstützung strategischer Entscheidungen. Erfahren in Analytics, Machine Learning und Visualisierung zur Lösung von Business-Herausforderungen.',
-    'Motiviert, analytische Fähigkeiten einzusetzen, um Unternehmenswachstum und Innovation in dynamischen Umgebungen voranzutreiben.',
+    'Data-Science-M.Sc.-Absolvent und angewandter KI-Forscher mit Fokus auf intelligente Systeme für multivariate Zeitreihenanalyse, Anomalieerkennung, Retrieval-Augmented Generation und Computer Vision.',
+    'Ich verbinde fundierte Machine-Learning-Forschung mit Production Engineering und überführe neue Ansätze in skalierbare, erklärbare Lösungen für reale wissenschaftliche und industrielle Herausforderungen.',
   ],
 };

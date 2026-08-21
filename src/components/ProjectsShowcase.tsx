@@ -140,16 +140,16 @@ const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({ onBack, initialProj
           <div className="projects__details" role="tabpanel">
             <div className="projects__meta">
               <h2 className="projects__projectTitle">
-                <a
-                  href={projectContent.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="projects__projectLink"
-                >
-                  {projectContent.title}
-                </a>
+                {projectContent.url ? (
+                  <a href={projectContent.url} target="_blank" rel="noopener noreferrer" className="projects__projectLink">
+                    {projectContent.title}
+                  </a>
+                ) : projectContent.title}
               </h2>
-              <p className="projects__summary">{projectContent.summary}</p>
+              <p className="projects__context">{projectContent.context}</p>
+              <ul className="projects__bullets">
+                {projectContent.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}
+              </ul>
             </div>
             <div className="projects__techList">
               {projectContent.tech.map((item) => (

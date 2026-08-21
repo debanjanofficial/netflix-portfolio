@@ -1,0 +1,3 @@
+Contact: mailto:debanjanofficial@gmail.com
+Preferred-Languages: en, de
+Canonical: https://debanjanchakraborty.dev/.well-known/security.txt
