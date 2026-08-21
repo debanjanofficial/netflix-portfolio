@@ -17,7 +17,15 @@ test('renders the portfolio profile selector', () => {
   expect(screen.getByText('Visitor')).toBeInTheDocument();
 });
 
-test.each(['Recruiter', 'Visitor'])('returns from Projects to the %s dashboard', (profileName) => {
+const dashboardSections = [
+  { button: 'Skills', heading: 'Skills' },
+  { button: 'Experience', heading: 'Experience' },
+  { button: 'Education', heading: 'Education' },
+  { button: 'Research & Publications', heading: 'Research & Publications' },
+  { button: 'Projects', heading: 'Projects' },
+];
+
+test.each(['Recruiter', 'Visitor'])('returns from every section to the %s dashboard', (profileName) => {
   window.localStorage.clear();
   window.scrollTo = jest.fn();
   Object.defineProperty(HTMLMediaElement.prototype, 'play', {
@@ -29,17 +37,19 @@ test.each(['Recruiter', 'Visitor'])('returns from Projects to the %s dashboard',
     value: jest.fn(),
   });
 
-  render(
-    <LanguageProvider translations={translations}>
-      <App />
-    </LanguageProvider>,
+  const { unmount } = render(
+    <LanguageProvider translations={translations}><App /></LanguageProvider>,
   );
 
   fireEvent.click(screen.getByText(profileName));
-  fireEvent.click(screen.getByRole('button', { name: 'Projects' }));
-  expect(screen.getByRole('heading', { name: 'Projects' })).toBeInTheDocument();
 
-  fireEvent.click(screen.getByRole('button', { name: 'Go back to dashboard' }));
-  expect(screen.getByRole('button', { name: 'Projects' })).toBeInTheDocument();
-  expect(window.scrollTo).toHaveBeenLastCalledWith({ top: 0, left: 0, behavior: 'auto' });
+  dashboardSections.forEach(({ button, heading }) => {
+    fireEvent.click(screen.getByRole('button', { name: button }));
+    expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Go back to dashboard' }));
+    expect(screen.getByRole('button', { name: button })).toBeInTheDocument();
+    expect(window.scrollTo).toHaveBeenLastCalledWith({ top: 0, left: 0, behavior: 'auto' });
+  });
+
+  unmount();
 });

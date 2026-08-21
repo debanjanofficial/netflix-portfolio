@@ -502,7 +502,7 @@ function App() {
     }
   };
 
-  const handleSkillsBack = () => {
+  const handleRecruiterSectionBack = () => {
     clearFocusStates();
     setRecruiterSection('dashboard');
     scrollToTop();
@@ -597,15 +597,15 @@ function App() {
       {headerShouldRender && headerElement}
       {profile === 'recruiter' ? (
         recruiterSection === 'skills' ? (
-          <SkillsShowcase onBack={handleSkillsBack} initialGroupId={skillsFocusId} />
+          <SkillsShowcase onBack={handleRecruiterSectionBack} initialGroupId={skillsFocusId} />
         ) : recruiterSection === 'experience' ? (
-          <ExperienceShowcase onBack={handleSkillsBack} initialExperienceId={experienceFocusId} />
+          <ExperienceShowcase onBack={handleRecruiterSectionBack} initialExperienceId={experienceFocusId} />
         ) : recruiterSection === 'education' ? (
-          <EducationShowcase onBack={handleSkillsBack} initialEducationId={educationFocusId} />
+          <EducationShowcase onBack={handleRecruiterSectionBack} initialEducationId={educationFocusId} />
         ) : recruiterSection === 'projects' ? (
-          <ProjectsShowcase onBack={handleSkillsBack} initialProjectId={projectsFocusId} />
+          <ProjectsShowcase onBack={handleRecruiterSectionBack} initialProjectId={projectsFocusId} />
         ) : recruiterSection === 'research' ? (
-          <ResearchShowcase onBack={handleSkillsBack} initialPublicationId={researchFocusId} />
+          <ResearchShowcase onBack={handleRecruiterSectionBack} initialPublicationId={researchFocusId} />
         ) : (
           <>
             <Banner profile={profile} />
