@@ -52,8 +52,10 @@ test.each(['Recruiter', 'Visitor'])('returns from every section to the %s dashbo
   fireEvent.click(screen.getByText(profileName));
 
   dashboardSections.forEach(({ button, heading }) => {
+    (window.scrollTo as jest.Mock).mockClear();
     fireEvent.click(screen.getByRole('button', { name: button }));
     expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument();
+    expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, left: 0, behavior: 'auto' });
     fireEvent.click(screen.getByRole('button', { name: 'Go back to dashboard' }));
     expect(screen.getByRole('button', { name: button })).toBeInTheDocument();
     expect(window.scrollTo).toHaveBeenLastCalledWith({ top: 0, left: 0, behavior: 'auto' });

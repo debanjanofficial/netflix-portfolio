@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import './ShowcaseLayout.css';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -20,6 +20,19 @@ const ShowcaseLayout: React.FC<ShowcaseLayoutProps> = ({
   children,
 }) => {
   const { t } = useLanguage();
+
+  useLayoutEffect(() => {
+    const resetScrollPosition = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+
+    resetScrollPosition();
+    const resetAfterPaint = window.setTimeout(resetScrollPosition, 0);
+
+    return () => window.clearTimeout(resetAfterPaint);
+  }, []);
 
   return (
     <section className="showcase">
