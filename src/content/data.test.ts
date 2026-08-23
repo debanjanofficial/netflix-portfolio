@@ -6,9 +6,14 @@ import {
   publications,
   researchInterests,
   skillGroups,
+  personalDetails,
 } from './data';
 
 const supportedLanguages = ['en', 'de', 'no', 'fi', 'sv', 'da', 'it', 'nl', 'fr', 'es', 'pl', 'cs', 'pt'] as const;
+
+test('uses the current LinkedIn profile', () => {
+  expect(personalDetails.linkedinUrl).toBe('https://www.linkedin.com/in/debanjan-chakraborty-dc/');
+});
 
 test.each(supportedLanguages)('provides complete résumé content in %s', (language) => {
   expect(bannerSummary[language]).toHaveLength(2);

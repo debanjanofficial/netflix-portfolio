@@ -45,7 +45,7 @@ export const personalDetails = {
   phoneUrl: 'tel:+4915292606217',
   email: 'dbjn.ckbrty99@gmail.com',
   emailUrl: 'mailto:dbjn.ckbrty99@gmail.com',
-  linkedinUrl: 'https://linkedin.com/in/debanjan-chakraborty',
+  linkedinUrl: 'https://www.linkedin.com/in/debanjan-chakraborty-dc/',
   githubUrl: 'https://github.com/debanjanofficial',
 };
 
