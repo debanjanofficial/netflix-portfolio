@@ -7,6 +7,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #000;
   color: white;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+#root {
+  overflow-x: hidden;
 }
 
 code {

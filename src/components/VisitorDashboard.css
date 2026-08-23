@@ -43,3 +43,35 @@
   font-size: 1.2rem;
   text-transform: uppercase;
 }
+
+@media (max-width: 600px) {
+  .visitorDashboard {
+    margin: 34px 16px calc(32px + env(safe-area-inset-bottom));
+  }
+
+  .visitorDashboard__title {
+    margin-bottom: 16px;
+    font-size: clamp(1.65rem, 8vw, 2rem);
+    line-height: 1.08;
+  }
+
+  .visitorDashboard__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .visitorDashboard__card {
+    height: 92px;
+    padding: 12px 8px;
+    border-radius: 10px;
+  }
+
+  .visitorDashboard__card:hover {
+    transform: none;
+  }
+
+  .visitorDashboard__cardContent h3 {
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+}

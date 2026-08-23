@@ -201,18 +201,19 @@ const Header: React.FC<HeaderProps> = ({
       <div className="header__left">
         <span className="header__brand">DEBANJAN</span>
         <nav className="header__nav" aria-label="Primary">
-          <button type="button" className="header__navItem" onClick={onHome}>
+          <button type="button" className="header__navItem header__navItem--home" onClick={onHome}>
             {t('header.home')}
           </button>
-          <button type="button" className="header__navItem" onClick={onOpenLinkedIn}>
+          <button type="button" className="header__navItem header__navItem--linkedin" onClick={onOpenLinkedIn}>
             {t('header.linkedin')}
           </button>
-          <button type="button" className="header__navItem" onClick={onOpenCV}>
+          <button type="button" className="header__navItem header__navItem--cv" onClick={onOpenCV}>
             {t('header.cv')}
           </button>
           <div className="header__language" ref={languageMenuRef}>
-            <button type="button" className="header__navItem" onClick={handleLanguageToggle}>
-              {t('header.language')}
+            <button type="button" className="header__navItem header__navItem--language" onClick={handleLanguageToggle}>
+              <span className="header__languageLabel">{t('header.language')}</span>
+              <span className="header__languageCode" aria-hidden="true">{language.toUpperCase()}</span>
             </button>
             {languageMenuOpen && (
               <div className="header__languageMenu" role="menu">

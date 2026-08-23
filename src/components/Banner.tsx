@@ -25,7 +25,7 @@ const Banner: React.FC<BannerProps> = ({ profile }) => {
         />
         <div className="banner__overlay" aria-hidden="true" />
         <div className="banner__contents banner__contents--recruiter">
-          <div style={{ marginBottom: '20px' }}>
+          <div className="banner__identityMark">
             <FalconLogo size="large" />
           </div>
           <h1 className="banner__title banner__title--recruiter">Debanjan Chakraborty</h1>
@@ -38,6 +38,7 @@ const Banner: React.FC<BannerProps> = ({ profile }) => {
             <span>{personalDetails.location}</span>
             <a href={personalDetails.emailUrl}>{personalDetails.email}</a>
             <a href={personalDetails.phoneUrl}>{personalDetails.phone}</a>
+            <a href={personalDetails.linkedinUrl} target="_blank" rel="noopener noreferrer">LinkedIn</a>
             <a href={personalDetails.githubUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
         </div>

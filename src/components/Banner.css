@@ -34,6 +34,10 @@
   gap: 1.25rem;
 }
 
+.banner__identityMark {
+  margin-bottom: 20px;
+}
+
 .banner__title {
   font-size: 4rem;
   font-weight: 800;
@@ -168,13 +172,34 @@
 }
 
 @media (max-width: 600px) {
+  .banner--recruiter {
+    align-items: stretch;
+    height: auto;
+    min-height: max(620px, 100svh);
+  }
+
+  .banner__overlay {
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.42) 32%, rgba(0, 0, 0, 0.68) 72%, #000 100%),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.5), transparent 80%);
+    mix-blend-mode: normal;
+  }
+
+  .banner__video {
+    object-position: 58% center;
+  }
+
   .banner__contents {
     left: 20px;
     bottom: 60px;
   }
 
   .banner__contents--recruiter {
-    padding: 0 20px 90px;
+    width: 100%;
+    max-width: none;
+    padding: calc(76px + env(safe-area-inset-top)) 18px 78px;
+    gap: 0.72rem;
+    justify-content: flex-end;
   }
 
   .banner__title {
@@ -182,10 +207,53 @@
   }
 
   .banner__title--recruiter {
-    font-size: 2.2rem;
+    font-size: clamp(1.85rem, 8.3vw, 2.2rem);
+    line-height: 1.08;
+    letter-spacing: 0.045em;
+    overflow-wrap: anywhere;
   }
 
   .banner__summary {
-    font-size: 0.9rem;
+    max-width: 100%;
+    font-size: clamp(0.86rem, 3.7vw, 0.96rem);
+    line-height: 1.48;
+    color: rgba(255, 255, 255, 0.94);
+  }
+
+  .banner__identityMark {
+    margin-bottom: 0;
+  }
+
+  .banner__identityMark .falcon-logo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .banner__identityMark .falcon-logo-container {
+    gap: 8px;
+  }
+
+  .banner__identityMark .falcon-logo-text {
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+  }
+
+  .banner__contact {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.45rem;
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+  }
+
+  .banner__contact > * {
+    min-width: 0;
+    width: fit-content;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .banner--fadeBottom {
+    height: 5rem;
   }
 }
