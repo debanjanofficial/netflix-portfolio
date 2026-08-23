@@ -345,36 +345,45 @@
   .header {
     height: calc(56px + env(safe-area-inset-top));
     padding: env(safe-area-inset-top) max(0.75rem, env(safe-area-inset-right)) 0 max(0.75rem, env(safe-area-inset-left));
-    gap: 0.65rem;
+    gap: 0.45rem;
     background: linear-gradient(180deg, rgba(0, 0, 0, 0.96) 0%, rgba(0, 0, 0, 0.7) 72%, transparent 100%);
   }
 
   .header__left {
+    flex: 1 1 auto;
     min-width: 0;
-    gap: 0.75rem;
+    gap: 0.4rem;
   }
 
   .header__brand {
     flex: 0 0 auto;
-    font-size: 1.05rem;
-    letter-spacing: 0.09em;
+    width: 32px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    font-size: 0;
+    letter-spacing: 0;
+  }
+
+  .header__brand::before {
+    content: 'DC';
+    color: #e50914;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
   }
 
   .header__nav {
     min-width: 0;
-    gap: 0.25rem;
+    gap: 0;
   }
 
   .header__navItem {
     min-height: 40px;
-    padding: 0 0.42rem;
-    font-size: 0.78rem;
+    padding: 0 0.3rem;
+    font-size: 0.7rem;
     white-space: nowrap;
-  }
-
-  .header__navItem--linkedin,
-  .header__navItem--cv {
-    display: none;
   }
 
   .header__languageLabel {
@@ -406,7 +415,7 @@
 
   .header__right {
     flex: 0 0 auto;
-    gap: 0.35rem;
+    gap: 0.2rem;
   }
 
   .header__iconButton {
@@ -462,15 +471,16 @@
 }
 
 @media (max-width: 370px) {
-  .header__brand {
-    font-size: 0.92rem;
-  }
-
   .header__left {
-    gap: 0.4rem;
+    gap: 0.15rem;
   }
 
   .header__navItem {
-    padding-inline: 0.3rem;
+    padding-inline: 0.2rem;
+    font-size: 0.66rem;
+  }
+
+  .header__iconButton {
+    width: 34px;
   }
 }
