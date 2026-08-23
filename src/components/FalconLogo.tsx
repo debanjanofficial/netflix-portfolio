@@ -1,5 +1,6 @@
 import React from 'react';
 import './FalconLogo.css';
+import falconMark from '../logo.svg';
 
 interface FalconLogoProps {
   showText?: boolean;
@@ -22,7 +23,7 @@ const FalconLogo: React.FC<FalconLogoProps> = ({ showText = true, size = 'medium
     <div className="falcon-logo-container">
       <div className={`falcon-logo ${getSizeClass()}`}>
         <img 
-          src="/logo.png" 
+          src={falconMark}
           alt="Falcon Logo" 
           className="falcon-logo-image"
         />
