@@ -195,6 +195,8 @@
   }
 
   .banner__contents--recruiter {
+    left: auto;
+    bottom: auto;
     width: 100%;
     max-width: none;
     padding: calc(76px + env(safe-area-inset-top)) 18px 78px;
