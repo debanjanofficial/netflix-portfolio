@@ -15,6 +15,14 @@ test('uses the current LinkedIn profile', () => {
   expect(personalDetails.linkedinUrl).toBe('https://www.linkedin.com/in/debanjan-chakraborty-dc/');
 });
 
+test.each(supportedLanguages)('provides the updated facial-expression publication in %s', (language) => {
+  const publication = publications.find((entry) => entry.id === 'facial-expression');
+  const content = publication?.content[language];
+
+  expect(content?.status).toContain('SN Computer Science');
+  expect(content?.url).toBe('https://doi.org/10.21203/rs.3.rs-10768327/v1');
+});
+
 test.each(supportedLanguages)('provides complete résumé content in %s', (language) => {
   expect(bannerSummary[language]).toHaveLength(2);
   expect(researchInterests[language]?.length).toBeGreaterThan(0);

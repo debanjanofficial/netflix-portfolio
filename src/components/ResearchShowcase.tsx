@@ -27,7 +27,13 @@ const ResearchShowcase: React.FC<ResearchShowcaseProps> = ({ onBack, initialPubl
         return (
           <article key={publication.id} className={`showcase__card ${publication.id === initialPublicationId ? 'showcase__card--focused' : ''}`}>
             <div className="showcase__meta"><span>{content.citation}</span><span>{content.status}</span></div>
-            <h3>{content.title}</h3>
+            <h3>
+              {content.url ? (
+                <a className="showcase__link" href={content.url} target="_blank" rel="noopener noreferrer">
+                  {content.title}
+                </a>
+              ) : content.title}
+            </h3>
             <p className="showcase__subtle"><em>{content.venue}</em></p>
           </article>
         );

@@ -21,6 +21,7 @@ const editorialOverrides = {
       'Jeg kombinerer grundig forskning innen maskinlæring med produksjonsrettet utvikling og omsetter nye ideer til skalerbare, forklarbare løsninger på reelle vitenskapelige og industrielle utfordringer.',
     ],
     remote: 'Fjernarbeid',
+    facialExpressionStatus: 'Innsendt · Under vurdering hos SN Computer Science',
   },
   fi: {
     banner: [
@@ -28,6 +29,7 @@ const editorialOverrides = {
       'Yhdistän perusteellisen koneoppimistutkimuksen tuotantotason ohjelmistokehitykseen ja muunnan uudet ideat skaalautuviksi, selitettäviksi ratkaisuiksi todellisiin tieteellisiin ja teollisiin haasteisiin.',
     ],
     remote: 'Etätyö',
+    facialExpressionStatus: 'Lähetetty · Arvioitavana SN Computer Science -lehdessä',
   },
   sv: {
     banner: [
@@ -35,6 +37,7 @@ const editorialOverrides = {
       'Jag förenar gedigen forskning inom maskininlärning med produktionsnära utveckling och omsätter nya idéer i skalbara, förklarbara lösningar på verkliga vetenskapliga och industriella utmaningar.',
     ],
     remote: 'Distansarbete',
+    facialExpressionStatus: 'Inskickad · Under granskning hos SN Computer Science',
   },
   da: {
     banner: [
@@ -42,6 +45,7 @@ const editorialOverrides = {
       'Jeg kombinerer grundig forskning i maskinlæring med produktionsorienteret udvikling og omsætter nye idéer til skalerbare, forklarlige løsninger på virkelige videnskabelige og industrielle udfordringer.',
     ],
     remote: 'Fjernarbejde',
+    facialExpressionStatus: 'Indsendt · Under bedømmelse hos SN Computer Science',
   },
   it: {
     banner: [
@@ -49,6 +53,7 @@ const editorialOverrides = {
       'Unisco una rigorosa ricerca nel machine learning all’ingegneria orientata alla produzione, trasformando idee innovative in soluzioni scalabili e spiegabili per sfide scientifiche e industriali reali.',
     ],
     remote: 'Da remoto',
+    facialExpressionStatus: 'Presentato · In fase di revisione presso SN Computer Science',
   },
   nl: {
     banner: [
@@ -56,6 +61,7 @@ const editorialOverrides = {
       'Ik combineer grondig onderzoek naar machine learning met productiegerichte engineering en vertaal nieuwe ideeën naar schaalbare, uitlegbare oplossingen voor wetenschappelijke en industriële uitdagingen uit de praktijk.',
     ],
     remote: 'Op afstand',
+    facialExpressionStatus: 'Ingediend · In beoordeling bij SN Computer Science',
   },
   fr: {
     banner: [
@@ -63,6 +69,7 @@ const editorialOverrides = {
       'J’allie une recherche rigoureuse en apprentissage automatique à une ingénierie orientée production afin de transformer des idées nouvelles en solutions évolutives et explicables pour des défis scientifiques et industriels concrets.',
     ],
     remote: 'À distance',
+    facialExpressionStatus: 'Soumis · En cours d’évaluation par SN Computer Science',
   },
   es: {
     banner: [
@@ -70,6 +77,7 @@ const editorialOverrides = {
       'Combino una investigación rigurosa en aprendizaje automático con ingeniería orientada a producción, transformando ideas innovadoras en soluciones escalables y explicables para retos científicos e industriales reales.',
     ],
     remote: 'En remoto',
+    facialExpressionStatus: 'Enviado · En revisión en SN Computer Science',
   },
   pl: {
     banner: [
@@ -77,6 +85,7 @@ const editorialOverrides = {
       'Łączę rzetelne badania nad uczeniem maszynowym z inżynierią produkcyjną, przekształcając nowe idee w skalowalne i wyjaśnialne rozwiązania rzeczywistych wyzwań naukowych i przemysłowych.',
     ],
     remote: 'Zdalnie',
+    facialExpressionStatus: 'Przesłano · W trakcie recenzji w SN Computer Science',
   },
   cs: {
     banner: [
@@ -84,6 +93,7 @@ const editorialOverrides = {
       'Propojuji důkladný výzkum strojového učení s produkčním vývojem a převádím nové myšlenky do škálovatelných a vysvětlitelných řešení skutečných vědeckých a průmyslových výzev.',
     ],
     remote: 'Na dálku',
+    facialExpressionStatus: 'Odesláno · V recenzním řízení v SN Computer Science',
   },
   pt: {
     banner: [
@@ -91,6 +101,7 @@ const editorialOverrides = {
       'Combino investigação rigorosa em aprendizagem automática com engenharia orientada para produção, transformando novas ideias em soluções escaláveis e explicáveis para desafios científicos e industriais reais.',
     ],
     remote: 'Remoto',
+    facialExpressionStatus: 'Submetido · Em revisão na SN Computer Science',
   },
 };
 
@@ -186,6 +197,7 @@ for (const target of targets) {
   generated[target] = rebuildWithTranslations(source, translated, { index: 0 });
   generated[target].banner = editorialOverrides[target].banner;
   generated[target].experiences[2].location = editorialOverrides[target].remote;
+  generated[target].publicationStatuses[1] = editorialOverrides[target].facialExpressionStatus;
   process.stdout.write(`Translated ${sourceStrings.length} fields to ${target}\n`);
 }
 

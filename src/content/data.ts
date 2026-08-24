@@ -34,7 +34,7 @@ export interface ProjectEntry {
 export interface PublicationEntry {
   id: string;
   content: Localized<{
-    citation: string; title: string; venue: string; status: string;
+    citation: string; title: string; venue: string; status: string; url?: string;
   }>;
 }
 
@@ -285,8 +285,8 @@ export const publications: PublicationEntry[] = [
   {
     id: 'facial-expression',
     content: {
-      en: { citation: 'Chakraborty, D. (2026)', title: 'Design and Evaluation of a Lightweight Real-Time Facial Expression Recognition System: A PyTorch Mini-Xception Implementation Trained on FERPlus', venue: 'SN Computer Science', status: 'Submitted · Preprint pending on Research Square' },
-      de: { citation: 'Chakraborty, D. (2026)', title: 'Design and Evaluation of a Lightweight Real-Time Facial Expression Recognition System: A PyTorch Mini-Xception Implementation Trained on FERPlus', venue: 'SN Computer Science', status: 'Eingereicht · Preprint auf Research Square ausstehend' },
+      en: { citation: 'Chakraborty, D. (2026)', title: 'Design and Evaluation of a Lightweight Real-Time Facial Expression Recognition System: A PyTorch Mini-Xception Implementation Trained on FERPlus', venue: 'SN Computer Science', status: 'Submitted · Under review at SN Computer Science', url: 'https://doi.org/10.21203/rs.3.rs-10768327/v1' },
+      de: { citation: 'Chakraborty, D. (2026)', title: 'Design and Evaluation of a Lightweight Real-Time Facial Expression Recognition System: A PyTorch Mini-Xception Implementation Trained on FERPlus', venue: 'SN Computer Science', status: 'Eingereicht · Bei SN Computer Science in Begutachtung', url: 'https://doi.org/10.21203/rs.3.rs-10768327/v1' },
     },
   },
 ];

@@ -112,7 +112,7 @@ export const generatedResumeTranslations = {
     ],
     "publicationStatuses": [
       "Sendt · Under vurdering",
-      "Sendt · Fortrykk venter på Research Square"
+      "Innsendt · Under vurdering hos SN Computer Science"
     ]
   },
   "fi": {
@@ -225,7 +225,7 @@ export const generatedResumeTranslations = {
     ],
     "publicationStatuses": [
       "Lähetetty · Tarkistuksessa",
-      "Lähetetty · Preprint vireillä Research Squarella"
+      "Lähetetty · Arvioitavana SN Computer Science -lehdessä"
     ]
   },
   "sv": {
@@ -338,7 +338,7 @@ export const generatedResumeTranslations = {
     ],
     "publicationStatuses": [
       "Inskickad · Under granskning",
-      "Inskickad · Förtryck väntar på Research Square"
+      "Inskickad · Under granskning hos SN Computer Science"
     ]
   },
   "da": {
@@ -451,7 +451,7 @@ export const generatedResumeTranslations = {
     ],
     "publicationStatuses": [
       "Indsendt · Under gennemgang",
-      "Indsendt · Fortryk afventer på Research Square"
+      "Indsendt · Under bedømmelse hos SN Computer Science"
     ]
   },
   "it": {
@@ -564,7 +564,7 @@ export const generatedResumeTranslations = {
     ],
     "publicationStatuses": [
       "Inserito · In fase di revisione",
-      "Inserito · Prestampa in attesa su Research Square"
+      "Presentato · In fase di revisione presso SN Computer Science"
     ]
   },
   "nl": {
@@ -677,7 +677,7 @@ export const generatedResumeTranslations = {
     ],
     "publicationStatuses": [
       "Ingediend · Wordt beoordeeld",
-      "Ingediend · Preprint in behandeling op Research Square"
+      "Ingediend · In beoordeling bij SN Computer Science"
     ]
   },
   "fr": {
@@ -790,7 +790,7 @@ export const generatedResumeTranslations = {
     ],
     "publicationStatuses": [
       "Soumis · En cours d'examen",
-      "Soumis · Préimpression en attente sur Research Square"
+      "Soumis · En cours d’évaluation par SN Computer Science"
     ]
   },
   "es": {
@@ -903,7 +903,7 @@ export const generatedResumeTranslations = {
     ],
     "publicationStatuses": [
       "Enviado · En revisión",
-      "Enviado · Preimpresión pendiente en Research Square"
+      "Enviado · En revisión en SN Computer Science"
     ]
   },
   "pl": {
@@ -1016,7 +1016,7 @@ export const generatedResumeTranslations = {
     ],
     "publicationStatuses": [
       "Przesłano · W trakcie sprawdzania",
-      "Przesłano · Przeddruk oczekuje na Placu Badawczym"
+      "Przesłano · W trakcie recenzji w SN Computer Science"
     ]
   },
   "cs": {
@@ -1129,7 +1129,7 @@ export const generatedResumeTranslations = {
     ],
     "publicationStatuses": [
       "Odesláno · Probíhá kontrola",
-      "Odesláno · Předtisk čeká na Research Square"
+      "Odesláno · V recenzním řízení v SN Computer Science"
     ]
   },
   "pt": {
@@ -1242,7 +1242,7 @@ export const generatedResumeTranslations = {
     ],
     "publicationStatuses": [
       "Enviado · Em revisão",
-      "Enviado · Pré-impressão pendente na Research Square"
+      "Submetido · Em revisão na SN Computer Science"
     ]
   }
 } as const;
