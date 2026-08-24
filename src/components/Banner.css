@@ -10,10 +10,11 @@
 }
 
 .banner--recruiter {
-  height: 75vh;
-  min-height: 520px;
+  height: auto;
+  min-height: 680px;
+  min-height: max(680px, 82svh);
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
 }
 
 .banner__contents {
@@ -27,15 +28,17 @@
   position: relative;
   bottom: auto;
   left: auto;
-  padding: 0 30px 120px;
-  max-width: 620px;
+  width: min(720px, 68vw);
+  max-width: none;
+  padding: clamp(96px, 10svh, 120px) clamp(28px, 4vw, 64px) clamp(88px, 10svh, 120px);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: clamp(0.8rem, 1.7svh, 1.15rem);
+  justify-content: flex-start;
 }
 
 .banner__identityMark {
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .banner__title {
@@ -45,7 +48,7 @@
 }
 
 .banner__title--recruiter {
-  font-size: 3.5rem;
+  font-size: clamp(2.65rem, 4.2vw, 3.5rem);
   line-height: 1.1;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -125,7 +128,7 @@
 }
 
 .banner__summary {
-  font-size: 1.05rem;
+  font-size: clamp(0.94rem, 1.2vw, 1.05rem);
   line-height: 1.6;
   max-width: 520px;
   color: rgba(255, 255, 255, 0.9);
@@ -152,18 +155,60 @@
   outline: none;
 }
 
-@media (max-width: 900px) {
+@media (min-width: 1600px) {
   .banner--recruiter {
-    height: 60vh;
-    min-height: 460px;
+    min-height: 740px;
+    min-height: max(740px, 78svh);
   }
 
   .banner__contents--recruiter {
-    padding: 0 20px 100px;
+    width: min(780px, 52vw);
   }
 
   .banner__title--recruiter {
-    font-size: 2.8rem;
+    font-size: 3.8rem;
+  }
+
+  .banner__summary {
+    max-width: 600px;
+    font-size: 1.08rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .banner--recruiter {
+    min-height: 650px;
+    min-height: max(650px, 86svh);
+  }
+
+  .banner__contents--recruiter {
+    width: min(680px, 74vw);
+    padding: 90px clamp(24px, 3vw, 40px) 82px;
+  }
+
+  .banner__identityMark .falcon-logo {
+    width: 68px;
+    height: 68px;
+  }
+
+  .banner__title--recruiter {
+    font-size: clamp(2.45rem, 4.7vw, 3.1rem);
+  }
+}
+
+@media (max-width: 900px) {
+  .banner--recruiter {
+    min-height: 640px;
+    min-height: max(640px, 92svh);
+  }
+
+  .banner__contents--recruiter {
+    width: min(620px, 82vw);
+    padding: 86px 28px 76px;
+  }
+
+  .banner__title--recruiter {
+    font-size: clamp(2.25rem, 6vw, 2.8rem);
   }
 
   .banner__summary {

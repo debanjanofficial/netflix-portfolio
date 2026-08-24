@@ -1,5 +1,6 @@
 .dashboard {
-  margin: 60px 30px 30px;
+  width: min(1440px, calc(100% - 60px));
+  margin: clamp(40px, 6vw, 72px) auto 30px;
 }
 .dashboard__title {
   color: #fff;
@@ -40,6 +41,7 @@
 
 @media (max-width: 600px) {
   .dashboard {
+    width: auto;
     margin: 34px 16px calc(32px + env(safe-area-inset-bottom));
   }
 

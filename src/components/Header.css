@@ -327,13 +327,47 @@
   outline: none;
 }
 
+@media (max-width: 1200px) {
+  .header {
+    padding: 0 2rem;
+  }
+
+  .header__left {
+    gap: 1.25rem;
+  }
+
+  .header__brand {
+    font-size: 1.5rem;
+  }
+
+  .header__nav {
+    gap: 0.8rem;
+  }
+
+  .header__right {
+    gap: 0.75rem;
+  }
+
+  .header__profileName {
+    display: none;
+  }
+}
+
 @media (max-width: 900px) {
   .header {
     padding: 0 1.5rem;
   }
 
-  .header__nav {
+  .header__left {
     gap: 0.9rem;
+  }
+
+  .header__nav {
+    gap: 0.55rem;
+  }
+
+  .header__navItem {
+    font-size: 0.86rem;
   }
 
   .header__searchInput {
